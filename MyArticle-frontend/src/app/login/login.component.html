@@ -1,60 +1,91 @@
 <!-- login.component.html -->
 
-
 <div class="login-page">
   <div class="left-section" style="background-image: url('assets/images/120.jfif');">
     <!-- Left section for background image -->
-</div>
-<div class="right-section">
-  <h1 class="brand-title" [routerLink]="['/home']">VELOURIA</h1>
-  <p class="sub-title">Sign in or create an account</p>
+  </div>
+  <div class="right-section">
+    <h1 class="brand-title" [routerLink]="['/home']">VELOURIA</h1>
 
+    <p class="sub-title" *ngIf="!showRegisterForm">Sign In or<span (click)="showRegisterForm = !showRegisterForm">                     Sign Up</span> </p>
 
-                <!-- Toggle buttons -->
+    <p class="sub-title" *ngIf="showRegisterForm">Register for a new account</p>
 
-  <div class="toggle-section">
+    <!-- Toggle buttons for User and Admin Login -->
+    <div class="toggle-section" *ngIf="!showRegisterForm">
       <button class="explore-button4" (click)="isUserLogin = true">User Login</button> &nbsp; &nbsp;
       <button class="explore-button4" (click)="isUserLogin = false">Admin Login</button>
-  </div>
-            <!-- User Login Form -->
+    </div>
 
-  <form *ngIf="isUserLogin" (ngSubmit)="onUserLogin()">
+    <!-- User Login Form -->
+    <form *ngIf="isUserLogin && !showRegisterForm" (ngSubmit)="onUserLogin()">
       <div class="form-group">
-          <label for="userEmail">Email:</label>
-          <input type="email" id="userEmail" [(ngModel)]="user.email" name="email" placeholder="User Email" required>
+        <label for="userEmail">Email:</label>
+        <input type="email" id="userEmail" [(ngModel)]="user.email" name="email" placeholder="User Email" required>
       </div>
-
       <div class="form-group">
-          <label for="userPassword">Password:</label>
-          <input type="password" id="userPassword" [(ngModel)]="user.password" name="password" placeholder="Password" required>
+        <label for="userPassword">Password:</label>
+        <input type="password" id="userPassword" [(ngModel)]="user.password" name="password" placeholder="Password" required>
       </div>
-
       <button type="submit" class="explore-button4">Login as User</button>
-  </form>
-            <!-- Admin Login Form -->
+    </form>
 
-  <form *ngIf="!isUserLogin" (ngSubmit)="onAdminLogin()">
+    <!-- Admin Login Form -->
+    <form *ngIf="!isUserLogin && !showRegisterForm" (ngSubmit)="onAdminLogin()">
       <div class="form-group">
-          <label for="adminEmail">Email:</label>
-          <input type="email" id="adminEmail" [(ngModel)]="admin.email" name="email" placeholder="Admin Email" required>
+        <label for="adminEmail">Email:</label>
+        <input type="email" id="adminEmail" [(ngModel)]="admin.email" name="email" placeholder="Admin Email" required>
       </div>
-
       <div class="form-group">
-          <label for="adminPassword">Password:</label>
-          <input type="password" id="adminPassword" [(ngModel)]="admin.password" name="password" placeholder="Password" required>
+        <label for="adminPassword">Password:</label>
+        <input type="password" id="adminPassword" [(ngModel)]="admin.password" name="password" placeholder="Password" required>
       </div>
-
       <button type="submit" class="explore-button4">Login as Admin</button>
-  </form>
-            <!-- Error Message -->
 
-  <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+    </form>
+
+    <div class="register-section">
+    <!-- Registration Form -->
+    <form *ngIf="showRegisterForm" (ngSubmit)="onRegister()">
+      <!-- Insert registration form fields similar to the login form fields -->
+      <div class="form-group">
+        <label for="registerEmail">Email:</label>
+        <input type="email" id="registerEmail" [(ngModel)]="user.email" name="email" placeholder="Your Email" required>
+      </div>
+
+      <div class="form-group">
+        <label for="registerPassword">Password:</label>
+        <input type="password" id="registerPassword" [(ngModel)]="user.password" name="password" placeholder="Create Password" required>
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password:</label>
+        <input type="password" id="confirmPassword" [(ngModel)]="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required>
+      </div>
+
+      <button type="submit" class="explore-button4">Register</button>
+
+    </form>
+    <a *ngIf="showRegisterForm" (click)="showRegisterForm = false" class="back-to-login-link">Back to Login</a>
+
+
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+    </div>
+
+    <!-- Sign Up Link -->
+    <!-- Existing login page content -->
+
+<!-- 'Or Sign In' Button and Registration Form
+
+
+  <form *ngIf="showRegisterForm" (ngSubmit)="onRegister()">
+
 </div>
+
+
+    <!-- Back to Login Link
+  </div>
 </div>
-<!-- login.component.html -->
 
-
-
-
-
-
+End of login.component.html -->

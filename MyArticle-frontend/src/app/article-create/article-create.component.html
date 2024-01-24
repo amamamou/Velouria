@@ -1,10 +1,7 @@
-<br>
-<br>
-<br>
-<!-- article-create.component.html -->
-<div class="article-create-wrapper">
+<!-- article-edit.component.html -->
+<div class="article-edit-wrapper">
   <form (submit)="onSubmit()" class="article-form">
-    <h2 class="form-header">Publish New Article</h2>
+    <h2 class="form-header">Edit Article</h2>
 
     <div class="form-field">
       <input type="text" id="title" [(ngModel)]="article.title" name="title" required>
@@ -21,12 +18,24 @@
       <label for="author">Author Name</label>
     </div>
 
+    <div class="form-field">
+      <select id="category" [(ngModel)]="article.category_id" name="category_id" required>
+        <option value="0">Category 0</option>
+        <option value="1">Category 1</option>
+        <option value="2">Category 2</option>
+        <option value="3">Category 3</option>
+        <option value="4">Category 4</option>
+        <option value="5">Category 5</option>
+        <option value="6">Category 6</option>
+      </select>
+      <label for="category">Category</label>
+    </div>
+
     <div class="form-field file-input">
       <input type="file" id="file" name="file" (change)="onFileSelected($event)">
       <label for="file">Choose Image</label>
     </div>
 
-    <button type="submit" class="publish-btn">Publish Article</button>
+    <button type="submit" class="publish-btn">Update Article</button>
   </form>
 </div>
-<br>

@@ -16,7 +16,9 @@ export class LoginComponent implements OnInit {
   admin: Admin = new Admin('', '', '');
   errorMessage: string = '';
   isUserLogin: boolean = true;
-
+  showRegisterForm: boolean = false;
+  newUser = { email: '', password: '' };
+  confirmPassword = '';
 
   constructor(private router : Router, private articleService: ArticleService) { }
 
@@ -45,5 +47,29 @@ export class LoginComponent implements OnInit {
           this.errorMessage = 'Invalid admin credentials';
         }
       );
+  }
+
+
+  onRegister(): void {
+    if (this.user.password === this.confirmPassword) {
+      this.articleService.registerUser(this.user).subscribe({
+        next: (response) => {
+          console.log('User registered successfully', response);
+          this.router.navigate(['/login']).catch(err => console.error('Navigation Error:', err));
+
+          // Handle successful registration
+          // You may want to redirect the user or show a success message
+        },
+        error: (error) => {
+          console.error('Registration failed', error);
+          // Handle registration errors
+          // Show an error message to the user
+        }
+      });
+    } else {
+      // Handle password mismatch
+      console.error('Passwords do not match');
+      // Implement your logic to inform the user about the mismatch
+    }
   }
 }

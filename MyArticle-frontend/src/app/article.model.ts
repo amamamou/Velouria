@@ -4,4 +4,5 @@ export interface Article {
   content: string;
   author: string;
   image: string ;
+  category_id: number;
 }

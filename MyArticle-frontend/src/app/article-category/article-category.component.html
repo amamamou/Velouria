@@ -1,0 +1,22 @@
+<div class="article-category">
+  <br>
+  <br>
+  <br>
+  <br>
+<!-- article-category.component.html -->
+<h1 *ngIf="category" class="category-title">{{ category.name }}</h1>
+
+  <div *ngIf="articles.length > 0; else noArticlesTemplate">
+    <div class="article-container">
+      <div *ngFor="let article of articles" class="article-card">
+        <div class="article-details" [style.background-image]="'url(' + getImageUrl(article.image) + ')'" [routerLink]="['/article', article.id]">
+          <!-- Add more article details as needed -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #noArticlesTemplate>
+    <p>No articles found in this category.</p>
+  </ng-template>
+</div>

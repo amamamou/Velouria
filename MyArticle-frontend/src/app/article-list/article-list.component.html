@@ -1,11 +1,24 @@
 <br>
 <br>
+<section id="curated-articles">
+  <div class="content-wrapper">
+    <div class="article-collection">
+      <article *ngFor="let category of categories" class="article-preview" [routerLink]="['/categories', category.id]">
+        <div class="article-details" [style.background-image]="'url(' + category.image + ')'">
+        </div>
+      </article>
+    </div>
+    <button class="explore-button8" [routerLink]="['/article-list']">Discover More</button>
+  </div>
+</section>
+
 <!-- article-list.component.html -->
 <div class="article-container">
   <div *ngFor="let article of articles" class="article-card">
-    <div class="article-details" [style.background-image]="'url(' + getImageUrl(article.image) + ')'">
-    <h2>{{ article.title }}</h2>
-    <p>{{ article.content | slice:0:100 }}<a [routerLink]="['/article', article.id]"> ...</a></p>
+    <div class="article-details" [style.background-image]="'url(' + getImageUrl(article.image) + ')'" [routerLink]="['/article', article.id]">
+</div>
+<h2 class="article-title">{{ article.title }}</h2>
+  </div>
 
 
 

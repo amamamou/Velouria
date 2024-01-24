@@ -7,7 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
 
 </head>
-<section id="home" class="parallax-section home-section">
+<!--<section id="home" class="parallax-section home-section">
   <div class="background-image"></div>
  <!-- <div class="background-video">
       <video autoplay muted loop>
@@ -23,26 +23,39 @@
   VELOURIA
 </div>
 -->
-<!-- home.component.html -->
+<!-- home.component.html
 <div class="velouria-intro-section">
   <h1>VELOURIA</h1>
-  <p>Dive into the magic of the season</p>
-  <button class="explore-button4">SHOP NOW</button>
+  <p>Uncover the Rich Tapestry of Stories & Insights</p>
+  <button class="explore-button4">DIVE IN</button>
 </div>
 
 </section>
+-->
+<br>
+<!-- home.component.html -->
+
+
+<section class="photo-catalogue">
+  <div class="catalogue-grid">
+    <div *ngFor="let num of [34,4,10,15,19,1,24,29]" >
+      <img src="assets/images/{{num}}.jfif" alt="Image {{num}}">
+    </div>
+  </div>
+</section>
+
 <section id="curated-articles">
   <div class="content-wrapper">
     <div class="article-collection">
-      <article *ngFor="let article of articles" class="article-preview" [routerLink]="['/article', article.id]">
-        <div class="article-details" [style.background-image]="'url(' + getImageUrl(article.image) + ')'">
-          <h3 class="article-title">{{ article.title }}</h3>
+      <article *ngFor="let category of categories" class="article-preview" [routerLink]="['/categories', category.id]">
+        <div class="article-details" [style.background-image]="'url(' + category.image + ')'">
         </div>
       </article>
     </div>
     <button class="explore-button5" [routerLink]="['/article-list']">Discover More</button>
   </div>
 </section>
+
 <br>
 <br>
 <br>
@@ -175,7 +188,18 @@
 
 
 -->
+
+
 <br>
 <section class="image-section">
   <img src="/assets/images/image.png" alt="Description of Image">
 </section>
+<section class="about-us-section">
+
+  <div class="about-us-container">
+    <div>
+    <p>At VELOURIA, we believe in the power of storytelling and the magic of words. Our platform offers a kaleidoscope of articles that enlighten, entertain, and inspire. From the depths of human experiences to the peaks of global cultures, VELOURIA is your gateway to a world of discovery.</p>
+  </div>
+  </div>
+</section>
+

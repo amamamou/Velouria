@@ -14,7 +14,9 @@ export class HeaderComponent implements OnInit {
   ngOnInit(): void {
   }
   logout(): void {
-    this.articleService.logout();
-    this.router.navigate(['/login']); // Redirect to login or home page after logout
+    console.log('Logout method called');
+    this.articleService.logout(); // Assuming this method doesn't return an Observable
+    this.router.navigate(['/login']).catch((err: any) => console.error('Navigation Error:', err));
   }
+
 }

@@ -56,3 +56,20 @@ button:hover {
 .ng-valid.ng-touched:not(form) {
   border-color: #28a745;
 }
+.or-sign-in {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.sign-in-link {
+  cursor: pointer;
+  color: #007bff; /* Adjust the color as per your theme */
+}
+
+.sign-in-link:hover {
+  text-decoration: underline;
+}
+
+.register-section form {
+  margin-top: 15px;
+}

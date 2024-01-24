@@ -28,21 +28,22 @@ connection.connect(error => {
   console.log("Connected to the database.");
 });
 
+// POST /articles - Create a new article
 app.post('/articles', upload.single('image'), (req, res) => {
-  console.log('Received file:', req.file);
-  console.log('Received body:', req.body);
-  const { title, content, author } = req.body;
-  const image = req.file ? 'uploads/' + req.file.filename : null;
-  const query = 'INSERT INTO articles (title, content, image, author) VALUES (?, ?, ?, ?)';
-  connection.query(query, [title, content, image, author], (error, results) => {
-    if (error) {
-      console.error('Database error:', error);
-      return res.status(500).send(error);
-    }
-    res.status(201).json({ id: results.insertId });
-  });
+    console.log('Received file:', req.file);
+    console.log('Received body:', req.body);
+    const { title, content, author, category_id } = req.body; // Added category_id
+    const image = req.file ? 'uploads/' + req.file.filename : null;
+    const query = 'INSERT INTO articles (title, content, image, author, category_id) VALUES (?, ?, ?, ?, ?)'; // Updated query
+    connection.query(query, [title, content, image, author, category_id], (error, results) => {
+        if (error) {
+            console.error('Database error:', error);
+            return res.status(500).send(error);
+        }
+        res.status(201).json({ id: results.insertId });
+    });
 });
-
+//lkol
 app.get('/articles', (req, res) => {
   connection.query('SELECT * FROM articles', (error, results) => {
     if (error) {
@@ -59,22 +60,20 @@ app.get('/articles/:id', (req, res) => {
     res.json(results[0]);
   });
 });
+// PUT /articles/:id - Update an existing article
 app.put('/articles/:id', upload.single('image'), (req, res) => {
-    const { title, content, author } = req.body;
+    const { title, content, author, category_id } = req.body; // Added category_id
     let query;
     let values;
 
     if (req.file) {
-        // If an image is uploaded, include it in the update
-        query = 'UPDATE articles SET title = ?, content = ?, author = ?, image = ? WHERE id = ?';
-        values = [title, content, author, 'uploads/' + req.file.filename, req.params.id];
+        query = 'UPDATE articles SET title = ?, content = ?, author = ?, image = ?, category_id = ? WHERE id = ?'; // Updated query
+        values = [title, content, author, 'uploads/' + req.file.filename, category_id, req.params.id]; // Added category_id
     } else {
-        // If no image is uploaded, don't include it in the update
-        query = 'UPDATE articles SET title = ?, content = ?, author = ?, WHERE id = ?';
-        values = [title, content, author, req.params.id];
+        query = 'UPDATE articles SET title = ?, content = ?, author = ?, category_id = ? WHERE id = ?'; // Updated query
+        values = [title, content, author, category_id, req.params.id]; // Added category_id
     }
 
-    // Log the query and values for debugging
     console.log('Executing query:', query);
     console.log('With values:', values);
 
@@ -86,7 +85,7 @@ app.put('/articles/:id', upload.single('image'), (req, res) => {
         res.json({ message: 'Article updated successfully' });
     });
 });
-
+//delete
 
 app.delete('/articles/:id', (req, res) => {
   connection.query('DELETE FROM articles WHERE id = ?', [req.params.id], (error) => {
@@ -164,3 +163,64 @@ app.post('/register/admin', async (req, res) => {
 
 
 
+//categories 
+app.post('/categories', (req, res) => {
+    const { name, image } = req.body;
+    const query = 'INSERT INTO categories (name, image) VALUES (?, ?)';
+    connection.query(query, [name, image], (error, results) => {
+        if (error) {
+            console.error("Error adding category:", error);
+            return res.status(500).send(error);
+        }
+        res.status(201).json({ message: 'Category added successfully', categoryId: results.insertId });
+    });
+});
+
+app.get('/categories/:id', (req, res) => {
+    connection.query('SELECT * FROM categories WHERE id = ?', [req.params.id], (error, results) => {
+        if (error) return res.status(500).send(error);
+        res.json(results[0] || {});
+    });
+});
+app.get('/categories', (req, res) => {
+    connection.query('SELECT * FROM categories', (error, results) => {
+        if (error) {
+            console.error("Error fetching categories:", error);
+            return res.status(500).send(error);
+        }
+        res.json(results);
+    });
+});
+
+app.put('/categories/:id', (req, res) => {
+    const { name, image } = req.body;
+    connection.query('UPDATE categories SET name = ?, image = ? WHERE id = ?', [name, image, req.params.id], (error, results) => {
+        if (error) {
+            console.error('Database error:', error);
+            return res.status(500).send(error);
+        }
+        if (results.affectedRows === 0) {
+            return res.status(404).send('Category not found');
+        }
+        res.json({ message: 'Category updated successfully' });
+    });
+});
+
+app.delete('/categories/:id', (req, res) => {
+    connection.query('DELETE FROM categories WHERE id = ?', [req.params.id], (error) => {
+        if (error) return res.status(500).send(error);
+        res.json({ message: 'Category deleted' });
+    });
+});
+app.get('/articles/category/:categoryId', (req, res) => {
+    const categoryId = req.params.categoryId;
+
+    const query = 'SELECT * FROM articles WHERE category_id = ?';
+    connection.query(query, [categoryId], (error, results) => {
+        if (error) {
+            console.error("Error fetching articles:", error);
+            return res.status(500).send(error);
+        }
+        res.json(results);
+    });
+});

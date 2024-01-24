@@ -41,9 +41,9 @@ export class ArticleDetailComponent implements OnInit {
   getImageUrl(imagePath: string): string {
     return `http://localhost:3000/${imagePath}`;
   }
-
-  imageError(event: ErrorEvent) {
-    console.error('Image loading error:', event.error);
+  imageError(event: any): void {
+    // Handle the error, maybe set a default image
+    console.error('Error loading image:', event);
   }
 
   updateArticle(id: string | undefined) {

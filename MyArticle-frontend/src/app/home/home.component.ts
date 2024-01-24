@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ArticleService } from '../article.service';
 import { Article } from '../article.model';
 import { Router } from '@angular/router';
+import { Category } from '../category.model';
 
 @Component({
   selector: 'app-home',
@@ -10,6 +11,9 @@ import { Router } from '@angular/router';
 })
 export class HomeComponent implements OnInit {
 
+  modalOpen: boolean = false;
+  selectedImageUrl: string = '';
+  categories: Category[] = []; // Define the type here
 
   articles: Article[] = [];
   hoverStates = new Map<number, boolean>();
@@ -22,6 +26,9 @@ export class HomeComponent implements OnInit {
       this.articles = data.slice(0, 800); // Fetch only the first three articles
       // If you want only the first few articles:
       // this.articles = data.slice(0, 5); // Adjust the number as needed
+    });
+    this.articleService.getAllCategories().subscribe(data => {
+      this.categories = data;
     });
   }
   getImageUrl(imagePath: string): string {
@@ -42,4 +49,9 @@ export class HomeComponent implements OnInit {
   }
 
 
+
+  openModal(imageUrl: string) {
+    this.selectedImageUrl = imageUrl;
+    this.modalOpen = true;
+  }
 }

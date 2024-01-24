@@ -7,6 +7,7 @@ import { ArticleEditComponent } from './article-edit/article-edit.component';
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
+import { ArticleCategoryComponent } from './article-category/article-category.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -17,7 +18,9 @@ const routes: Routes = [
   { path: 'edit-article/:id', component: ArticleEditComponent },
   { path: 'login', component: LoginComponent},
   { path: 'home', component: HomeComponent },
-  { path: 'register', component: RegisterComponent }
+  { path: 'register', component: RegisterComponent },
+  { path: 'categories/:id', component: ArticleCategoryComponent },
+
 
 
 

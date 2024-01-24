@@ -1,0 +1,75 @@
+/* article-list.component.css */
+.article-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+
+}
+/* article-category.component.css */
+.category-title {
+  text-align: center;
+  font-family: 'Lora', serif;
+}
+/* article-category.component.css */
+h1 {
+  text-align: center; /* Center the text */
+  font-family: 'Lora', serif; /* Use the Lora font */
+}
+
+.article-title {
+  font-family: 'Anton', sans-serif;
+  font-size: 1.2em;
+  font-weight: bold;
+  margin: 10px;
+  z-index: 1;
+  margin-bottom: 150px;
+}
+.article-card {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin: 20px;
+  width: 300px;
+  min-height: 250px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.article-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+
+.article-card p {
+  color: #555;
+  font-size: 1em;
+  line-height: 1.5;
+  height: 4.8em; /* Adjusts to show approx two lines of text */
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.article-card a {
+  display: inline-block;
+  margin-top: 10px; /* Closer to the text */
+  color: #4b2c04; /* A pleasant green, but choose any color you like */
+  font-weight: bold;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.article-card a:hover {
+  color: #169a32; /* A darker shade of the link color for hover effect */
+  text-decoration: underline;
+}
+.article-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  background-size: cover;
+  background-position: center;
+  height: 100%;
+}

@@ -5,7 +5,7 @@ body {
 
 /* Parallax Sections */
 .parallax-section {
-  height: 100vh;
+  height: 50vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -648,6 +648,7 @@ body {
 
 .velouria-intro-section {
   position: absolute;
+
   left: 0;
   bottom: 0;
   padding: 20px;
@@ -659,13 +660,13 @@ body {
   font-size: 1.2em; /* Smaller font size */
   margin-bottom: 1em;
   margin-left: 80px;
-  font-family: 'Garamond', serif; /* Optionally, a different, more elegant font */
+  font-family: 'Anton', sans-serif;
 
 
 }
 
 .velouria-intro-section p {
-  font-family: 'Garamond', serif; /* Optionally, a different, more elegant font */
+  font-family: 'Anton', sans-serif;
 
   font-size: 1.8em; /* Smaller font size */
   margin-bottom: 1em;
@@ -691,3 +692,47 @@ body {
   font-family: 'Roboto Slab', serif; /* Roboto Slab font */
   cursor: pointer;
 }
+.photo-catalogue {
+  padding: 20px;
+  background-color: #f5f5f5; /* or any color you prefer */
+}
+
+.catalogue-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-gap: 15px;
+}
+
+.catalogue-grid div {
+  overflow: hidden;
+}
+
+.catalogue-grid img {
+  width: 100%;
+  height: auto;
+  transition: transform 0.3s ease-in-out;
+}
+
+.catalogue-grid img:hover {
+  transform: scale(1.1);
+}
+.about-us-section {
+  background-color: #fff; /* Default white background */
+  padding: 60px;
+  text-align: center;
+}
+
+.about-us-container h2 {
+  font-size: 3em;
+  color: #333; /* Elegant text color */
+  margin-bottom: 30px;
+}
+
+.about-us-container p {
+  font-size: 1.3em;
+  line-height: 1.8;
+  color: #666;
+  max-width: 800px; /* Limit the width for better readability */
+  margin: auto; /* Center the paragraph */
+}
+
