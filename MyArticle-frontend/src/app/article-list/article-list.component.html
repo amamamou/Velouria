@@ -1,0 +1,11 @@
+<br>
+<br>
+<!-- article-list.component.html -->
+<div class="article-container">
+  <div *ngFor="let article of articles" class="article-card">
+    <div class="article-details" [style.background-image]="'url(' + getImageUrl(article.image) + ')'">
+    <h2>{{ article.title }}</h2>
+    <p>{{ article.content | slice:0:100 }}<a [routerLink]="['/article', article.id]"> ...</a></p>
+
+
+

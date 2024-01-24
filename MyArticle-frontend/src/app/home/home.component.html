@@ -1,0 +1,181 @@
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500&family=Roboto:wght@300;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto+Slab:wght@300;400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+
+</head>
+<section id="home" class="parallax-section home-section">
+  <div class="background-image"></div>
+ <!-- <div class="background-video">
+      <video autoplay muted loop>
+        <source src="assets/videos/3.mp4" type="video/mp4">
+      </video>
+  </div>
+
+
+
+<div class="intellecto-slogan">
+  CAPTIVATING ARTICLES &<br>
+  THOUGHT-PROVOKING INSIGHTS AT<br>
+  VELOURIA
+</div>
+-->
+<!-- home.component.html -->
+<div class="velouria-intro-section">
+  <h1>VELOURIA</h1>
+  <p>Dive into the magic of the season</p>
+  <button class="explore-button4">SHOP NOW</button>
+</div>
+
+</section>
+<section id="curated-articles">
+  <div class="content-wrapper">
+    <div class="article-collection">
+      <article *ngFor="let article of articles" class="article-preview" [routerLink]="['/article', article.id]">
+        <div class="article-details" [style.background-image]="'url(' + getImageUrl(article.image) + ')'">
+          <h3 class="article-title">{{ article.title }}</h3>
+        </div>
+      </article>
+    </div>
+    <button class="explore-button5" [routerLink]="['/article-list']">Discover More</button>
+  </div>
+</section>
+<br>
+<br>
+<br>
+<!--<div class="article-details" [style.background-image]="'url(' + getImageUrl(article.image) + ')'">
+-->
+
+
+
+<!--
+  <section id="welcome-section">
+  <div class="background-video">
+   Embed your video here
+    <video autoplay muted loop>
+      <source src="assets/videos/7.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </div>
+  <div class="bgv2">
+   <p><!-- Ever thirsted for a realm where words dance and thoughts resonate?
+    <br><br>Welcome to <strong class="highlighted">Intellecto</strong>, your sanctuary of profound articles. <br>
+      Our carefully curated collection surpasses expectations, featuring pieces that blend erudition, elegance, and captivating narrative.<br>Embark on an expedition across diverse realms of knowledge, unveiling the splendor in every story.<br>
+       From compelling analyses to mesmerizing essays, each article is a hallmark of our devotion to intellectual excellence.<br>Peruse our rich assortment and embrace the summit of literary craftsmanship, all within reach.
+</p>
+  <div class="button-container">
+    <button routerLink="/create" class="explore-button">Create your own now</button>
+  </div>
+</div>
+<br>
+</section>
+-->
+<section class="community-section">
+  <div class="container">
+    <div class="row">
+      <div class="col-left">
+        <img src="assets/images/horse.png" alt="Horse">
+      </div>
+      <div class="col-right">
+        <h2>JOIN A GROWING COMMUNITY OF 300,000+ THINKERS</h2>
+        <p>Be a part of the community</p>
+        <p>Immerse yourself in a realm where curiosity leads and intellect thrives. Engage, explore, and contribute to a universe of articles that span across all genres and topics.</p>
+        <button class="explore-button4" [routerLink]="['/login']">Start Exploring</button>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!--<section id="about-section">
+  <div class="container">
+    <h2>About Intellecto</h2>
+    <div class="about-content">
+      <div class="about-text">
+        <p>Intellecto was founded with the vision of creating a hub for thought-provoking articles and captivating insights. Our team of passionate writers and thinkers are dedicated to exploring a wide range of topics, from arts and culture to science and technology.</p>
+        <p>We believe in the power of words to enlighten minds and inspire action. Join us on our journey to discover and share knowledge that matters.</p>
+        <button routerLink="/about" class="explore-button2">Learn More About Us</button>
+      </div>
+      <div class="about-image">
+        <!-- Image of your team or something symbolic
+        <img src="assets/images/15.jpg" alt="About Intellecto">
+      </div>
+    </div>
+  </div>
+</section>
+-->
+<!--<section id="featured-articles">
+  <div class="container">
+   <h2 class="section-title">Dive Deeper</h2>
+    <div class="articles-container">
+      <div *ngFor="let article of articles" class="article-card" [routerLink]="['/article-list']">
+        <div class="article-content" [routerLink]="['/article', article.id]">
+          <h3>{{ article.title }}</h3>
+          <p>{{ article.content | slice:0:100 }} .. </p>
+        </div>
+      </div>
+    </div>
+  <button class="explore-button3" [routerLink]="['/article-list']">See More</button>
+  </div>
+</section>
+-->
+
+
+<!--<section id="testimonials-section">
+  <div class="container">
+    <h2 class="section-title">What Our Readers Say</h2>
+    <div class="testimonials-container">
+      <!-- Testimonial 1
+      <div class="testimonial">
+        <img src="assets/images/18.jpg" alt="Jane Doe" class="testimonial-image">
+        <p class="testimonial-text">"Intellecto has been a constant source of inspiration and knowledge for me. The quality of articles is outstanding, and I always find something new and thought-provoking to read."</p>
+        <h4 class="testimonial-author">- Jane Doe, Avid Reader</h4>
+      </div>
+      <!-- Testimonial 2
+      <div class="testimonial">
+        <img src="assets/images/19.jpg" alt="John Smith" class="testimonial-image">
+        <p class="testimonial-text">"As a writer, I have found a welcoming and nurturing community at Intellecto. The feedback and engagement from readers have been incredibly valuable."</p>
+        <h4 class="testimonial-author">- John Smith, Contributor</h4>
+      </div>
+      <!-- More testimonials can be added here
+    </div>
+  </div>
+</section>
+-->
+
+
+<!----<section id="writing-tips">
+  <div class="container">
+    <h2 class="section-title">Writing Tips & Resources</h2>
+    <div class="tips-container">
+      <div class="tip">
+        <h3>Tip of the Week</h3>
+        <p>Discover new ways to enhance your writing every week!</p>
+        <button class="btn">Learn More</button>
+      </div>
+      <div class="resource">
+        <h3>Resource Library</h3>
+        <p>Explore our collection of writing tools, guides, and references!</p>
+        <button class="btn">Explore</button>
+      </div>
+      <div class="challenge">
+        <h3>Monthly Challenge</h3>
+        <p>Join our monthly writing challenges and unleash your creativity!</p>
+        <button class="btn">Participate</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+
+
+-->
+<br>
+<section class="image-section">
+  <img src="/assets/images/image.png" alt="Description of Image">
+</section>

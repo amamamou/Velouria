@@ -1,0 +1,118 @@
+/* Footer Styling */
+/* Footer Styling */
+footer {
+  color: #bbb;
+  background-color: #000000;
+  padding: 20px 0;
+  font-size: 14px;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.footer-section {
+margin-left: 50px;
+}
+.velouria-title h3 {
+  color: #fff;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 2.5em;
+  margin-bottom: 10px; /* Spacing between title and text */
+}
+
+.velouria-title p {
+  color: #bbb; /* Adjust color as needed */
+  font-size: 1em; /* Adjust size as needed */
+  margin: 5px 0; /* Spacing between paragraphs */
+}
+
+.velouria-title .more-from {
+  font-weight: bold; /* Emphasize the 'MORE FROM VELOURIA' text */
+}
+
+/* Rest of your CSS */
+
+/* Rest of your CSS */
+
+.footer-section {
+  margin-right: 30px;
+}
+
+.footer-section h3 {
+  color: #fff;
+  font-size: 2em;
+  font-weight: bold;
+  font-family: 'Playfair Display', serif; /* Playfair Display font for the title */
+}
+
+.footer-section ul {
+  list-style-type: none;
+  padding: 0;
+  display: flex; /* Align list items in flex */
+  flex-wrap: wrap; /* Wrap items to the next line */
+  max-width: 400px; /* Adjust as needed */
+}
+
+.footer-section ul li {
+  flex-basis: 50%; /* Each item takes up half of the width */
+  box-sizing: border-box;
+  padding-right: 10px; /* Add some padding between items */
+  margin-top: 10px; /* Space above each list item */
+  line-height: 1.6; /* Space between lines */
+}
+
+.footer-bottom {
+  border-top: 1px solid #444;
+  text-align: center;
+  padding-top: 10px;
+}
+
+.footer-links a {
+  color: #bbb;
+  text-decoration: none;
+}
+
+.footer-disclaimer {
+  font-size: 12px;
+  margin-top: 10px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .footer-content, .footer-section ul {
+      flex-direction: column;
+      align-items: center;
+  }
+
+  .footer-section ul li {
+      flex-basis: 100%; /* Full width on smaller screens */
+  }
+
+  .footer-section {
+      margin-bottom: 20px;
+  }
+
+  .footer-links a {
+      display: block;
+      margin: 5px 0;
+  }
+}
+
+/* Footer Bottom Links */
+.footer-bottom p {
+  display: inline-block;
+  margin: 0 10px;
+  border-right: 1px solid #777;
+  padding-right: 10px;
+}
+
+.footer-bottom p:last-child {
+  border-right: none;
+}
+.image-section{
+    margin-left: 360px;
+}

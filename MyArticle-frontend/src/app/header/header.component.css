@@ -1,0 +1,52 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  padding-top: 70px; /* Adjust this value based on the height of your navbar */
+}
+
+.navbar {
+  background-color: white;
+  text-align: center;
+  padding: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  position: fixed; /* Makes the navbar fixed */
+  top: 0; /* Aligns it to the top */
+  left: 0; /* Aligns it to the left */
+  right: 0; /* Ensures it stretches across the screen */
+  z-index: 1000; /* Ensures it stays above other content */
+}
+
+.brand-title {
+    color: #000000;
+    font-size: 2.8em;
+    font-weight: bold;
+    font-family: 'Playfair Display', serif;
+    margin-bottom: 5px; /* Space above the line */
+}
+
+.separator {
+  height: 1px;
+  background-color: lightgrey;
+  width: 100%; /* Adjust the width as per requirement */
+  margin: 0 auto; /* Centers the line */
+  margin-bottom: 10px; /* Space below the line */
+}
+
+.navbar-links ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar-links li {
+  display: inline; /* Aligns items in a line */
+  margin: 0 10px; /* Space between items */
+}
+
+.navbar-links a {
+  text-decoration: none;
+  color: black;
+}
+.hidden-links {
+  display: none;
+}

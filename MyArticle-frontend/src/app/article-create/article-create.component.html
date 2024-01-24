@@ -1,0 +1,32 @@
+<br>
+<br>
+<br>
+<!-- article-create.component.html -->
+<div class="article-create-wrapper">
+  <form (submit)="onSubmit()" class="article-form">
+    <h2 class="form-header">Publish New Article</h2>
+
+    <div class="form-field">
+      <input type="text" id="title" [(ngModel)]="article.title" name="title" required>
+      <label for="title">Article Title</label>
+    </div>
+
+    <div class="form-field">
+      <textarea id="content" [(ngModel)]="article.content" name="content" required></textarea>
+      <label for="content">Content</label>
+    </div>
+
+    <div class="form-field">
+      <input type="text" id="author" [(ngModel)]="article.author" name="author" required>
+      <label for="author">Author Name</label>
+    </div>
+
+    <div class="form-field file-input">
+      <input type="file" id="file" name="file" (change)="onFileSelected($event)">
+      <label for="file">Choose Image</label>
+    </div>
+
+    <button type="submit" class="publish-btn">Publish Article</button>
+  </form>
+</div>
+<br>

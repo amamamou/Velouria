@@ -1,0 +1,26 @@
+<div class="container">
+  <h2>Edit Article</h2>
+  <form (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="title">Title</label>
+      <input type="text" class="form-control" id="title" [(ngModel)]="article.title" name="title" required>
+    </div>
+
+    <div class="form-group">
+      <label for="content">Content</label>
+      <textarea class="form-control" id="content" rows="3" [(ngModel)]="article.content" name="content" required></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="author">Author</label>
+      <input type="text" class="form-control" id="author" [(ngModel)]="article.author" name="author" required>
+    </div>
+
+    <div class="form-group">
+      <label for="image">Image</label>
+      <input type="file" class="form-control-file" id="image" (change)="onFileSelected($event)">
+    </div>
+
+    <button type="submit" class="btn btn-primary">Update Article</button>
+  </form>
+</div>

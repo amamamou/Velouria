@@ -1,0 +1,29 @@
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+<div class="article-detail-container" *ngIf="article">
+  <div class="article-header">
+    <h1 class="article-title">{{ article.title }}</h1>
+    <div class="article-meta">
+      <span class="article-author">By {{ article.author }}</span>
+      <!-- Optionally, you can add the publication date or other details here -->
+    </div>
+    <br>
+    <img *ngIf="article.image" [src]="getImageUrl(article.image)"
+         (error)="imageError($event)"
+         alt="Article Image" class="article-image">
+
+  </div>
+
+  <div class="article-body">
+    <p class="article-content">{{ article.content }}</p>
+  </div>
+
+  <div class="article-actions">
+    <button (click)="deleteArticle(article.id)" class="article-action-btn delete-btn">Delete</button>
+    <button (click)="updateArticle(article.id)" class="article-action-btn update-btn">Update</button>
+  </div>
+</div>
+
+<div *ngIf="!article" class="article-not-found">
+  <p>Article not found.</p>
+</div>
