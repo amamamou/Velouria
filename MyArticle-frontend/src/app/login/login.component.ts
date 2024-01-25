@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent implements OnInit {
 
-  user: User = new User(0,'','', '');
+user: User = new User(0, '', '', '', '', '', '');
   admin: Admin = new Admin('', '', '');
   errorMessage: string = '';
   isUserLogin: boolean = true;
@@ -28,14 +28,22 @@ export class LoginComponent implements OnInit {
   onUserLogin(): void {
     this.articleService.loginUser(this.user.email, this.user.password)
       .subscribe(
-        success => {
-          this.router.navigate(['/article-list']).catch(err => console.error('Navigation Error:', err));
+        response => {
+          // Assuming the response contains the user's ID
+          if(response && response.userId) {
+            localStorage.setItem('userId', response.userId);
+            this.router.navigate(['/article-list']).catch(err => console.error('Navigation Error:', err));
+          } else {
+            console.error('User ID not found in the response');
+            this.errorMessage = 'Login failed. Please try again.';
+          }
         },
         error => {
           this.errorMessage = 'Invalid user credentials';
         }
       );
   }
+
 
   onAdminLogin(): void {
     this.articleService.loginAdmin(this.admin.email, this.admin.password)

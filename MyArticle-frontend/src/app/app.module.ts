@@ -15,6 +15,9 @@ import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { ModalComponent } from './modal/modal.component';
 import { ArticleCategoryComponent } from './article-category/article-category.component';
+import { UserProfileComponent } from './user-profile/user-profile.component';
+import { DefaultImagePipe } from 'src/default-image.pipe';
+import { EditProfileComponent } from './edit-profile/edit-profile.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +32,11 @@ import { ArticleCategoryComponent } from './article-category/article-category.co
     LoginComponent,
     RegisterComponent,
     ModalComponent,
-    ArticleCategoryComponent
+    ArticleCategoryComponent,
+    UserProfileComponent,
+    DefaultImagePipe,
+    EditProfileComponent
+
   ],
   imports: [
     BrowserModule,

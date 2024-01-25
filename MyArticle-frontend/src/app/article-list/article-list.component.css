@@ -5,14 +5,7 @@
   justify-content: space-around;
 
 }
-.article-title {
-  font-family: 'Anton', sans-serif;
-  font-size: 1.2em;
-  font-weight: bold;
-  margin: 10px;
-  z-index: 1;
-  margin-top: -46px;
-}
+
 .article-card {
   background-color: #f9f9f9;
   border: 1px solid #ddd;
@@ -104,6 +97,38 @@
 
 
 
+.article-card {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 20px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.article-image {
+  height: 200px; /* Adjust as needed */
+  background-size: cover;
+  background-position: center;
+  border-top-left-radius: 10px; /* Match the card's border radius */
+  border-top-right-radius: 10px;
+}
+
+.article-title {
+  font-family: 'Anton', sans-serif; /* Apply Anton font */
+  font-size: 1.4em; /* Font size */
+  font-weight: bold; /* Make the font bold */
+  color: #333; /* Adjust color as needed */
+  margin: 10px;
+  text-align: center; /* Center align the title */
+}
+
+
+.article-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
 
 
 .article-snippet {

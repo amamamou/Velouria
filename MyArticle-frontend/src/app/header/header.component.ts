@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ArticleService } from '../article.service';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -9,7 +9,11 @@ import { Router } from '@angular/router';
 })
 export class HeaderComponent implements OnInit {
 
-  constructor(private articleService: ArticleService, private router : Router) { }
+  constructor(private articleService: ArticleService, private router : Router) {   this.router.events.subscribe((event) => {
+    if (event instanceof NavigationEnd) {
+      console.log('Current URL:', event.url);
+    }
+  });}
 
   ngOnInit(): void {
   }
@@ -18,5 +22,17 @@ export class HeaderComponent implements OnInit {
     this.articleService.logout(); // Assuming this method doesn't return an Observable
     this.router.navigate(['/login']).catch((err: any) => console.error('Navigation Error:', err));
   }
+  navigateToProfile() {
+    console.log('Navigating to profile...');
+    const userId = localStorage.getItem('userId');
+    if (userId) {
+      this.router.navigate(['/user-profile', userId]);
+    } else {
+      console.log('No user ID found');
+      // Handle the case where there's no user ID
+    }
+  }
+
+
 
 }

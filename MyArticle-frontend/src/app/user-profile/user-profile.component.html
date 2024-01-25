@@ -1,0 +1,16 @@
+<br>
+<br>
+<br>
+<br>
+<div class="user-profile" *ngIf="user">
+  <div class="profile-picture">
+    <img [src]="user.profilePic | defaultImage:'assets/images/person.png'" alt="Profile Picture">
+  </div>
+  <div class="profile-info">
+    <h2>{{ user.firstName }} {{ user.lastName }}</h2>
+    <p class="username">@{{ user.username }}</p>
+    <p>{{ user.email }}</p>
+    <button class="explore-button4" (click)="editProfile()">Edit Profile</button>
+    <button class="explore-button4" (click)="deleteProfile()">Delete Profile</button>
+  </div>
+</div>

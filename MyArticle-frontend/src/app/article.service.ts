@@ -79,4 +79,5 @@ export class ArticleService {
   getArticlesByCategory(categoryId: string): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/articles/category/${categoryId}`);
   }
+
 }

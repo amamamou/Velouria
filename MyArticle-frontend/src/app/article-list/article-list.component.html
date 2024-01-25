@@ -15,10 +15,16 @@
 <!-- article-list.component.html -->
 <div class="article-container">
   <div *ngFor="let article of articles" class="article-card">
-    <div class="article-details" [style.background-image]="'url(' + getImageUrl(article.image) + ')'" [routerLink]="['/article', article.id]">
-</div>
-<h2 class="article-title">{{ article.title }}</h2>
+    <!-- Top Section with Background Image -->
+    <div class="article-image" [style.background-image]="'url(' + getImageUrl(article.image) + ')'" [routerLink]="['/article', article.id]">
+      <!-- Image related content (if any) goes here -->
+    </div>
+
+    <!-- Bottom Section with Title -->
+    <h2 class="article-title">{{ article.title }}</h2>
   </div>
+</div>
+
 
 
 

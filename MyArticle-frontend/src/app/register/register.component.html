@@ -1,11 +1,21 @@
 <div class="registration-container">
-  <form (submit)="onRegister()">
+  <form (submit)="onRegister()" enctype="multipart/form-data">
     <h2>Register</h2>
 
     <div class="form-group">
       <label for="username">Username</label>
       <input type="text" id="username" [(ngModel)]="user.username" name="username" required>
     </div>
+    <div class="form-group">
+      <label for="firstName">First Name</label>
+      <input type="text" id="firstName" [(ngModel)]="user.firstName" name="firstName">
+    </div>
+
+    <div class="form-group">
+      <label for="lastName">Last Name</label>
+      <input type="text" id="lastName" [(ngModel)]="user.lastName" name="lastName">
+    </div>
+
 
     <div class="form-group">
       <label for="email">Email</label>
@@ -16,6 +26,12 @@
       <label for="password">Password</label>
       <input type="password" id="password" [(ngModel)]="user.password" name="password" required>
     </div>
+     <!-- Profile Picture Field -->
+     <div class="form-group">
+      <label for="profilePic">Profile Picture</label>
+      <input type="file" id="profilePic" (change)="onFileSelected($event)" name="profilePic">
+    </div>
+
 
     <button type="submit">Register</button>
   </form>
