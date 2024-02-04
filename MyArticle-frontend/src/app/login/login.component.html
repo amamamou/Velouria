@@ -21,17 +21,18 @@
     <form *ngIf="isUserLogin && !showRegisterForm" (ngSubmit)="onUserLogin()">
       <div class="form-group">
         <label for="userEmail">Email:</label>
-        <input type="email" id="userEmail" [(ngModel)]="user.email" name="email" placeholder="User Email" required>
+        <input type="email" id="userEmail" [(ngModel)]="user.email" name="email" placeholder="User Email" required autocomplete="current-email">
       </div>
       <div class="form-group">
         <label for="userPassword">Password:</label>
-        <input type="password" id="userPassword" [(ngModel)]="user.password" name="password" placeholder="Password" required>
+        <input type="password" id="userPassword" [(ngModel)]="user.password" name="password" placeholder="Password" required autocomplete="current-password">
       </div>
       <button type="submit" class="explore-button4">Login as User</button>
     </form>
 
-    <!-- Admin Login Form -->
-    <form *ngIf="!isUserLogin && !showRegisterForm" (ngSubmit)="onAdminLogin()">
+
+    <!-- Admin Login Form
+      <form *ngIf="!isUserLogin && !showRegisterForm" (ngSubmit)="onAdminLogin()">
       <div class="form-group">
         <label for="adminEmail">Email:</label>
         <input type="email" id="adminEmail" [(ngModel)]="admin.email" name="email" placeholder="Admin Email" required>
@@ -44,6 +45,7 @@
 
     </form>
 
+  -->
     <div class="register-section">
     <!-- Registration Form -->
     <form *ngIf="showRegisterForm" (ngSubmit)="onRegister()">

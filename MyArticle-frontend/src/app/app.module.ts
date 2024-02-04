@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ArticleListComponent } from './article-list/article-list.component';
@@ -15,9 +15,11 @@ import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { ModalComponent } from './modal/modal.component';
 import { ArticleCategoryComponent } from './article-category/article-category.component';
-import { UserProfileComponent } from './user-profile/user-profile.component';
 import { DefaultImagePipe } from 'src/default-image.pipe';
 import { EditProfileComponent } from './edit-profile/edit-profile.component';
+import { CommonModule } from '@angular/common';
+import { AuthGuard } from 'src/auth.guard';
+import { AuthInterceptor } from './auth.interceptor';
 
 @NgModule({
   declarations: [
@@ -33,9 +35,9 @@ import { EditProfileComponent } from './edit-profile/edit-profile.component';
     RegisterComponent,
     ModalComponent,
     ArticleCategoryComponent,
-    UserProfileComponent,
     DefaultImagePipe,
-    EditProfileComponent
+    EditProfileComponent,
+
 
   ],
   imports: [
@@ -43,12 +45,18 @@ import { EditProfileComponent } from './edit-profile/edit-profile.component';
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    CommonModule,
+
 
 
 
   ],
-  providers: [],
+  providers: [ {
+    provide: HTTP_INTERCEPTORS,
+    useClass: AuthInterceptor,
+    multi: true
+  }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

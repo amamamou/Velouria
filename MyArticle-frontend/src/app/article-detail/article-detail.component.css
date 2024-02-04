@@ -70,3 +70,15 @@
   justify-content: center; /* Centers the buttons horizontally */
   align-items: center; /* Centers the buttons vertically, if needed */
 }
+/* article-detail.component.css */
+.heart-icon {
+  font-size: 40px; /* Adjust the size as needed */
+  cursor: pointer;
+  transition: color 0.3s ease-in-out;
+}
+
+
+.liked {
+  color: red;
+}
+

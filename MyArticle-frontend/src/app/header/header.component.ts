@@ -8,6 +8,7 @@ import { NavigationEnd, Router } from '@angular/router';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
+  userId: string = '1'; // Assign the actual user ID here
 
   constructor(private articleService: ArticleService, private router : Router) {   this.router.events.subscribe((event) => {
     if (event instanceof NavigationEnd) {
@@ -22,15 +23,8 @@ export class HeaderComponent implements OnInit {
     this.articleService.logout(); // Assuming this method doesn't return an Observable
     this.router.navigate(['/login']).catch((err: any) => console.error('Navigation Error:', err));
   }
-  navigateToProfile() {
-    console.log('Navigating to profile...');
-    const userId = localStorage.getItem('userId');
-    if (userId) {
-      this.router.navigate(['/user-profile', userId]);
-    } else {
-      console.log('No user ID found');
-      // Handle the case where there's no user ID
-    }
+  navigateToProfile(userId: string): void {
+    this.router.navigate(['/profile', userId]);
   }
 
 

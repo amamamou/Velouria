@@ -31,16 +31,5 @@ export class RegisterComponent {
     formData.append('lastName', this.user.lastName);
     formData.append('profilePic', this.selectedFile, this.selectedFile.name);
 
-    // Use your user service to send the form data
-    this.userService.registerUser(formData).subscribe(
-      response => {
-        console.log('User registered successfully', response);
-        // Handle response
-      },
-      error => {
-        console.error('Error registering user', error);
-        // Handle error
-      }
-    );
   }
 }

@@ -1,9 +1,7 @@
-// login.component.ts
 import { Component, OnInit } from '@angular/core';
-import { ArticleService } from '../article.service';
-import { User } from 'src/user.model';
-import { Admin } from 'src/admin.model';
 import { Router } from '@angular/router';
+import { UserService } from '../user.service';
+import { User } from 'src/user.model';
 
 @Component({
   selector: 'app-login',
@@ -11,73 +9,71 @@ import { Router } from '@angular/router';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
+  user: User = {
+    userId: 0,
+    username: '',
+    email: '',
+    password: '',
+    firstName: '',
+    lastName: '',
+    profilePic: ''
+  };
 
-user: User = new User(0, '', '', '', '', '', '');
-  admin: Admin = new Admin('', '', '');
-  errorMessage: string = '';
-  isUserLogin: boolean = true;
-  showRegisterForm: boolean = false;
-  newUser = { email: '', password: '' };
   confirmPassword = '';
+  errorMessage = '';
+  showRegisterForm = false;
+  isUserLogin = true;
 
-  constructor(private router : Router, private articleService: ArticleService) { }
+  constructor(private userService: UserService, private router: Router) {}
 
-  ngOnInit(): void {
+  ngOnInit(): void {}
+
+  onUserLogin() {
+    const loginCredentials = {
+      email: this.user.email,
+      password: this.user.password
+    };
+
+    this.userService.loginUser(loginCredentials).subscribe(
+      (response) => {
+        console.log('Login response:', response);
+
+        // Set token in localStorage
+        this.userService.setToken(response.token);
+
+        // Set authentication status
+        this.userService.setAuthenticated(true);
+
+        // Handle successful login
+        this.loginSuccess(response);
+        this.router.navigate(['/article-list']);
+
+      },
+      (error) => {
+        console.error('Login error:', error);
+
+        // Set error message
+        this.errorMessage = error.error ? error.error : 'Incorrect email or password';
+      }
+    );
   }
 
-  onUserLogin(): void {
-    this.articleService.loginUser(this.user.email, this.user.password)
-      .subscribe(
-        response => {
-          // Assuming the response contains the user's ID
-          if(response && response.userId) {
-            localStorage.setItem('userId', response.userId);
-            this.router.navigate(['/article-list']).catch(err => console.error('Navigation Error:', err));
-          } else {
-            console.error('User ID not found in the response');
-            this.errorMessage = 'Login failed. Please try again.';
-          }
-        },
-        error => {
-          this.errorMessage = 'Invalid user credentials';
-        }
-      );
-  }
+// Example code in your login.component.ts
+loginSuccess(response: any): void {
+  localStorage.setItem('token', response.token); // or sessionStorage.setItem('token', response.token);
+  // Other logic...
+}
 
 
-  onAdminLogin(): void {
-    this.articleService.loginAdmin(this.admin.email, this.admin.password)
-      .subscribe(
-        success => {
-          this.router.navigate(['/article-list']).catch(err => console.error('Navigation Error:', err));
-        },
-        error => {
-          this.errorMessage = 'Invalid admin credentials';
-        }
-      );
-  }
-
-
-  onRegister(): void {
-    if (this.user.password === this.confirmPassword) {
-      this.articleService.registerUser(this.user).subscribe({
-        next: (response) => {
-          console.log('User registered successfully', response);
-          this.router.navigate(['/login']).catch(err => console.error('Navigation Error:', err));
-
-          // Handle successful registration
-          // You may want to redirect the user or show a success message
-        },
-        error: (error) => {
-          console.error('Registration failed', error);
-          // Handle registration errors
-          // Show an error message to the user
-        }
-      });
-    } else {
-      // Handle password mismatch
-      console.error('Passwords do not match');
-      // Implement your logic to inform the user about the mismatch
-    }
+  onRegister() {
+    this.userService.registerUser(this.user.email, this.user.password).subscribe(
+      () => {
+        // Registration successful
+        // You might want to redirect or show a success message
+      },
+      (error) => {
+        this.errorMessage = error; // Handle the error as needed
+      }
+    );
   }
 }

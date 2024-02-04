@@ -1,23 +1,17 @@
 const express = require('express');
 const session = require('express-session');
-const jwt = require('jsonwebtoken');
-
+const bcrypt = require('bcrypt');
 const mysql = require('mysql');
+const util = require('util');
 const cors = require('cors');
 const multer = require('multer');
-const bcrypt = require('bcrypt');
+const secretKey = 'karam';
 const saltRounds = 10;
+const jwt = require('jsonwebtoken');
 
 const app = express();
-app.use(cors());
+app.use(cors({ credentials: true, origin: 'http://localhost:4200' }));
 app.use(express.json());
-app.use('/uploads', express.static('uploads'));
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, 'uploads/'),
-  filename: (req, file, cb) => cb(null, Date.now() + '-' + file.originalname)
-});
-const upload = multer({ storage });
 
 const connection = mysql.createConnection({
   host: 'localhost',
@@ -26,17 +20,45 @@ const connection = mysql.createConnection({
   database: 'myarticle'
 });
 
+// Use util.promisify to convert callback-based queries to promise-based
 connection.connect(error => {
   if (error) throw error;
   console.log("Connected to the database.");
 });
+connection.query = util.promisify(connection.query).bind(connection);
+
 // Configure express-session
 app.use(session({
-    secret: 'karam',
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false } // Set to true if using https
+  secret: 'karam',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false, sameSite: 'none' }, // Add this line, set to true if using HTTPS
 }));
+app.use('/uploads', express.static('uploads'));
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, 'uploads/'),
+  filename: (req, file, cb) => cb(null, Date.now() + '-' + file.originalname)
+});
+const upload = multer({ storage });
+
+// Middleware to check if the user is logged in
+const isLoggedIn = (req, res, next) => {
+  // Check if the user is authenticated
+  if (req.session && req.session.authenticated) {
+    // Proceed to the next middleware or route handler
+    next();
+  } else {
+    // User is not authenticated, respond with 401 Unauthorized
+    res.status(401).json({ error: 'Unauthorized', authenticated: false });
+  }
+};
+
+
+
+
+// POST /articles - 
+
 // POST /articles - Create a new article
 app.post('/articles', upload.single('image'), (req, res) => {
     console.log('Received file:', req.file);
@@ -201,95 +223,177 @@ app.get('/articles/category/:categoryId', (req, res) => {
         res.json(results);
     });
 });
-//userrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
 
-// Middleware to check if the user is logged in
-function isLoggedIn(req, res, next) {
-    if (req.session.userId) {
-        return next();
+// User registration
+app.post('/register', async (req, res) => {
+  const { username, email, password } = req.body;
+  if (!username || !email || !password) {
+    return res.status(400).send('Username, email, and password are required');
+  }
+
+  try {
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    await connection.query('INSERT INTO users (username, email, password) VALUES (?, ?, ?)', [username, email, hashedPassword]);
+    res.status(201).send('User created');
+  } catch (error) {
+    console.error('Database error:', error);
+    res.status(500).send(error.message);
+  }
+});
+
+// Protected route using isLoggedIn middleware
+/*
+app.get('/users/profile', isLoggedIn, async (req, res) => {
+  try {
+    // Fetch user data from the database based on the userId stored in the session
+    const userData = await connection.query('SELECT username, email, profile_pic, first_name, last_name FROM users WHERE user_id = ?', [req.session.userId]);
+
+    // Check if a user with the provided userId was found
+    if (userData.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
     }
-    res.status(401).send('Not logged in');
-}
 
-// Register User
-app.post('/register/user', async (req, res) => {
-    const { username, email, password, first_name, last_name } = req.body;
-    const passwordHash = await bcrypt.hash(password, 10);
+    const user = userData[0];
 
-    connection.query('INSERT INTO users (username, email, password_hash, first_name, last_name) VALUES (?, ?, ?, ?, ?)', 
-    [username, email, passwordHash, first_name, last_name], (error, results) => {
-        if (error) return res.status(500).send(error);
-        res.status(201).send('User registered successfully');
+    // Respond with user data
+    res.status(200).json({
+      message: "User is logged in",
+      authenticated: true,
+      userId: req.session.userId,
+      username: user.username,
+      email: user.email,
+      profile_pic: user.profile_pic,
+      first_name: user.first_name,
+      last_name: user.last_name
     });
+  } catch (error) {
+    // Handle database errors
+    console.error('Database error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 });
-
-// User Login
+*/
 app.post('/login', async (req, res) => {
-    const { email, password } = req.body;
-    connection.query('SELECT * FROM users WHERE email = ?', [email], async (error, results) => {
-        if (error) return res.status(500).send(error);
-        if (results.length === 0) return res.status(404).send('User not found');
+  const { email, password } = req.body;
 
-        const user = results[0];
-        const passwordIsValid = await bcrypt.compare(password, user.password_hash);
+  // Validate presence of email and password
+  if (!email || !password) {
+    return res.status(400).json({ error: 'Email and password are required' });
+  }
 
-        if (passwordIsValid) {
-            req.session.userId = user.user_id; // Set user ID in session
-            res.send('Login successful');
-        } else {
-            res.status(401).send('Invalid password');
-        }
-    });
+  try {
+    // Check if the email exists in the database
+    const users = await connection.query('SELECT * FROM users WHERE email = ?', [email]);
+
+    // Check if a user with the provided email was found
+    if (users.length === 0) {
+      return res.status(401).json({ error: 'Incorrect email or password', authenticated: false });
+    }
+
+    const user = users[0];
+
+    // Compare the entered password with the hashed password in the database
+    const isPasswordValid = await bcrypt.compare(password, user.password_hash);
+
+    if (isPasswordValid) {
+      // Set user session
+      req.session.authenticated = true;
+      req.session.userId = user.user_id;
+      req.session.save();  // Save the session immediately
+
+      // Generate JWT token
+      const token = jwt.sign({ userId: user.user_id }, 'karam', { expiresIn: '1h' });
+
+
+      // Respond with a success message and user data
+      res.status(200).json({
+        message: 'Logged in successfully',
+        authenticated: true,
+        userId: user.user_id,
+        username: user.username,
+        email: user.email,
+        profile_pic: user.profile_pic,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        token: token  // Include the token in the response
+      });
+    } else {
+      // If the password doesn't match, return unauthorized
+      res.status(401).json({ error: 'Incorrect email or password', authenticated: false, token: null });
+    }
+  } catch (error) {
+    // Handle database errors
+    console.error('Database error:', error);
+    res.status(500).json({ error: 'Internal Server Error', authenticated: false, token: null });
+  }
 });
 
-// Get User Profile
-app.get('/users/profile', isLoggedIn, (req, res) => {
-    connection.query('SELECT username, email, first_name, last_name, profile_pic FROM users WHERE user_id = ?', [req.session.userId], (error, results) => {
-        if (error) return res.status(500).send(error);
-        if (results.length === 0) return res.status(404).send('User not found');
-        res.json(results[0]);
-    });
-});
 
+/*
 // Update User Profile
-app.put('/users/profile', isLoggedIn, (req, res) => {
-    const { username, email, first_name, last_name, profile_pic } = req.body;
-    let query = 'UPDATE users SET ';
-    let values = [];
+app.put('/users/profile', isLoggedIn, async (req, res) => {
+  const { username, email, first_name, last_name, profile_pic } = req.body;
+  let query = 'UPDATE users SET ';
+  let values = [];
 
-    if (username) { query += 'username = ?, '; values.push(username); }
-    if (email) { query += 'email = ?, '; values.push(email); }
-    if (first_name) { query += 'first_name = ?, '; values.push(first_name); }
-    if (last_name) { query += 'last_name = ?, '; values.push(last_name); }
-    if (profile_pic) { query += 'profile_pic = ?, '; values.push(profile_pic); }
+  if (username) { query += 'username = ?, '; values.push(username); }
+  if (email) { query += 'email = ?, '; values.push(email); }
+  if (first_name) { query += 'first_name = ?, '; values.push(first_name); }
+  if (last_name) { query += 'last_name = ?, '; values.push(last_name); }
+  if (profile_pic) { query += 'profile_pic = ?, '; values.push(profile_pic); }
 
-    query = query.slice(0, -2);
-    query += ' WHERE user_id = ?';
-    values.push(req.session.userId);
+  query = query.slice(0, -2);
+  query += ' WHERE user_id = ?';
+  values.push(req.session.userId);
 
-    connection.query(query, values, (error) => {
-        if (error) return res.status(500).send(error);
-        res.json({ message: 'Profile updated successfully' });
-    });
+  try {
+    await connection.query(query, values);
+    res.json({ message: 'Profile updated successfully' });
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 });
-
+*/
 // Logout User
-app.post('/logout', (req, res) => {
-    req.session.destroy();
-    res.send('Logged out successfully');
+app.get('/logout', function (req, res) {
+  req.session.destroy(); // Destroy session data
+  res.json({ message: 'Logged out' });
 });
 
-// Delete User
-app.delete('/users/profile', isLoggedIn, (req, res) => {
-    connection.query('DELETE FROM users WHERE user_id = ?', [req.session.userId], (error, results) => {
-        if (error) return res.status(500).send(error);
-        if (results.affectedRows === 0) return res.status(404).send('User not found');
-        req.session.destroy();
-        res.send('User deleted successfully');
-    });
+
+
+// Your existing route for article likes (just keeping it here for reference)
+// Like an article (protected route - requires authentication)
+// Simplified Like Route - Assumes `isLoggedIn` Middleware Sets `req.user`
+app.post('/like/:articleId', isLoggedIn, async (req, res) => {
+  // Assuming `req.user` is set by `isLoggedIn` middleware and includes `user_id`
+  const userId = req.users.user_id; // Adjust based on your user object structure
+  const articleId = req.params.articleId;
+
+  try {
+    // Check if the like already exists
+    const [existingLike] = await connection.query('SELECT * FROM likes WHERE user_id = ? AND article_id = ?', [userId, articleId]);
+
+    if (existingLike.length === 0) {
+      // Insert new like if not already liked
+      await connection.query('INSERT INTO likes (user_id, article_id) VALUES (?, ?)', [userId, articleId]);
+      res.json({ message: 'Like added successfully', success: true });
+    } else {
+      // User has already liked the article
+      res.status(400).json({ message: 'Article already liked by the user', success: false });
+    }
+  } catch (error) {
+    console.error('Error processing like:', error);
+    res.status(500).json({ message: 'Internal Server Error', success: false });
+  }
 });
+
+// Define a set of permissions as strings
+// Simulate user authentication status (replace this with your actual logic)
+
 
 const port = 3000;
 app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
+  console.log(`Server running on port ${port}`);
 });
