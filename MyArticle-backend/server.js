@@ -5,7 +5,6 @@ const mysql = require('mysql');
 const util = require('util');
 const cors = require('cors');
 const multer = require('multer');
-const secretKey = 'karam';
 const saltRounds = 10;
 const jwt = require('jsonwebtoken');
 
@@ -20,19 +19,17 @@ const connection = mysql.createConnection({
   database: 'myarticle'
 });
 
-// Use util.promisify to convert callback-based queries to promise-based
 connection.connect(error => {
   if (error) throw error;
   console.log("Connected to the database.");
 });
 connection.query = util.promisify(connection.query).bind(connection);
 
-// Configure express-session
 app.use(session({
   secret: 'karam',
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: false, sameSite: 'none' }, // Add this line, set to true if using HTTPS
+  cookie: { secure: false, sameSite: 'none' }, 
 }));
 app.use('/uploads', express.static('uploads'));
 
@@ -42,14 +39,10 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// Middleware to check if the user is logged in
 const isLoggedIn = (req, res, next) => {
-  // Check if the user is authenticated
   if (req.session && req.session.authenticated) {
-    // Proceed to the next middleware or route handler
     next();
   } else {
-    // User is not authenticated, respond with 401 Unauthorized
     res.status(401).json({ error: 'Unauthorized', authenticated: false });
   }
 };
@@ -224,7 +217,7 @@ app.get('/articles/category/:categoryId', (req, res) => {
     });
 });
 
-// User registration
+// registration
 app.post('/register', async (req, res) => {
   const { username, email, password } = req.body;
   if (!username || !email || !password) {
@@ -276,36 +269,29 @@ app.get('/users/profile', isLoggedIn, async (req, res) => {
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
-  // Validate presence of email and password
   if (!email || !password) {
     return res.status(400).json({ error: 'Email and password are required' });
   }
 
   try {
-    // Check if the email exists in the database
     const users = await connection.query('SELECT * FROM users WHERE email = ?', [email]);
 
-    // Check if a user with the provided email was found
     if (users.length === 0) {
       return res.status(401).json({ error: 'Incorrect email or password', authenticated: false });
     }
 
     const user = users[0];
 
-    // Compare the entered password with the hashed password in the database
     const isPasswordValid = await bcrypt.compare(password, user.password_hash);
 
     if (isPasswordValid) {
-      // Set user session
       req.session.authenticated = true;
       req.session.userId = user.user_id;
       req.session.save();  // Save the session immediately
 
-      // Generate JWT token
       const token = jwt.sign({ userId: user.user_id }, 'karam', { expiresIn: '1h' });
 
 
-      // Respond with a success message and user data
       res.status(200).json({
         message: 'Logged in successfully',
         authenticated: true,
@@ -315,14 +301,12 @@ app.post('/login', async (req, res) => {
         profile_pic: user.profile_pic,
         first_name: user.first_name,
         last_name: user.last_name,
-        token: token  // Include the token in the response
+        token: token  
       });
     } else {
-      // If the password doesn't match, return unauthorized
       res.status(401).json({ error: 'Incorrect email or password', authenticated: false, token: null });
     }
   } catch (error) {
-    // Handle database errors
     console.error('Database error:', error);
     res.status(500).json({ error: 'Internal Server Error', authenticated: false, token: null });
   }
@@ -355,33 +339,27 @@ app.put('/users/profile', isLoggedIn, async (req, res) => {
   }
 });
 */
-// Logout User
+// logout
 app.get('/logout', function (req, res) {
-  req.session.destroy(); // Destroy session data
+  req.session.destroy(); 
   res.json({ message: 'Logged out' });
 });
 
 
 
-// Your existing route for article likes (just keeping it here for reference)
-// Like an article (protected route - requires authentication)
-// Simplified Like Route - Assumes `isLoggedIn` Middleware Sets `req.user`
+//like
 app.post('/like/:articleId', isLoggedIn, async (req, res) => {
-  // Assuming `req.user` is set by `isLoggedIn` middleware and includes `user_id`
-  const userId = req.users.user_id; // Adjust based on your user object structure
+  const userId = req.user.user_id;
   const articleId = req.params.articleId;
 
   try {
-    // Check if the like already exists
     const [existingLike] = await connection.query('SELECT * FROM likes WHERE user_id = ? AND article_id = ?', [userId, articleId]);
 
     if (existingLike.length === 0) {
-      // Insert new like if not already liked
       await connection.query('INSERT INTO likes (user_id, article_id) VALUES (?, ?)', [userId, articleId]);
       res.json({ message: 'Like added successfully', success: true });
     } else {
-      // User has already liked the article
-      res.status(400).json({ message: 'Article already liked by the user', success: false });
+=      res.status(400).json({ message: 'Article already liked by the user', success: false });
     }
   } catch (error) {
     console.error('Error processing like:', error);
@@ -389,8 +367,6 @@ app.post('/like/:articleId', isLoggedIn, async (req, res) => {
   }
 });
 
-// Define a set of permissions as strings
-// Simulate user authentication status (replace this with your actual logic)
 
 
 const port = 3000;
