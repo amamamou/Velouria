@@ -15,7 +15,7 @@ export class ArticleDetailComponent implements OnInit {
   articleId: string | null = null;
   isLoggedIn: boolean = false;
   article: Article | undefined;
-  articleIdForRedirect: string | undefined; // Add this line
+  articleIdForRedirect: string | undefined; 
   token: string | null = null;
 
   constructor(
@@ -48,29 +48,22 @@ export class ArticleDetailComponent implements OnInit {
     );
   }
 
-  // ArticleDetailComponent.ts
-// ArticleDetailComponent.ts
-// ArticleDetailComponent.ts
-// Example code in article-detail.component.ts
+
 likeOrRedirect(): void {
   if (this.article && this.article.id && this.token) {
-    const articleId = +this.article.id; // Convert to number
+    const articleId = +this.article.id;
     this.userService.likeArticle(articleId, this.token).subscribe(
       () => {
-        // Handle successful like
       },
       (error) => {
         if (error.status === 401) {
-          // Handle unauthorized error
           this.userService.handleUnauthorizedError();
         } else {
-          // Handle other errors
           console.error('Error liking the article:', error);
         }
       }
     );
   } else {
-    // Handle the case where either articleId or token is not available
     console.error('Article or token not available');
   }
 }
@@ -87,7 +80,6 @@ redirectToLogin(articleId: string): void {
 }
 
 
-  // Additional methods...
 
   onLoginSuccess(): void {
     const redirectArticleId = sessionStorage.getItem('redirectArticleId');
@@ -98,7 +90,6 @@ redirectToLogin(articleId: string): void {
       this.router.navigate(['/']);
     }
 
-    // Call handleRedirectAfterLogin to clear articleIdForRedirect
     this.handleRedirectAfterLogin();
   }
 

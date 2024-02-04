@@ -38,13 +38,10 @@ export class LoginComponent implements OnInit {
       (response) => {
         console.log('Login response:', response);
 
-        // Set token in localStorage
         this.userService.setToken(response.token);
 
-        // Set authentication status
         this.userService.setAuthenticated(true);
 
-        // Handle successful login
         this.loginSuccess(response);
         this.router.navigate(['/article-list']);
 
@@ -52,27 +49,23 @@ export class LoginComponent implements OnInit {
       (error) => {
         console.error('Login error:', error);
 
-        // Set error message
         this.errorMessage = error.error ? error.error : 'Incorrect email or password';
       }
     );
   }
 
-// Example code in your login.component.ts
 loginSuccess(response: any): void {
-  localStorage.setItem('token', response.token); // or sessionStorage.setItem('token', response.token);
-  // Other logic...
+ sessionStorage.setItem('token', response.token);
 }
 
 
   onRegister() {
     this.userService.registerUser(this.user.email, this.user.password).subscribe(
       () => {
-        // Registration successful
-        // You might want to redirect or show a success message
+     //tombaed
       },
       (error) => {
-        this.errorMessage = error; // Handle the error as needed
+        this.errorMessage = error;
       }
     );
   }

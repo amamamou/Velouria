@@ -22,18 +22,14 @@ export class UserService {
     this.checkLoginStatus();
   }
 
-// user.service.ts
 
-// ...
 
 public handleUnauthorizedError(): void {
   console.error('Unauthorized error. Token may be invalid or expired.');
-  // Additional logic for handling unauthorized errors
-  // For example, redirecting the user to the login page
+
   this.router.navigate(['/login']);
 }
 
-// ...
 
   private getHeadersWithAuthorization(): HttpHeaders {
     const token = this.getToken();
@@ -47,28 +43,21 @@ public handleUnauthorizedError(): void {
   }
 
   private handleError(error: HttpErrorResponse) {
-    // Your existing error handling logic
     if (error.status === 401) {
       this.handleUnauthorizedError();
       return throwError('Authentication failed. Please log in again.');
     } else {
-      // Other error handling
       return throwError(error.message || 'Server error');
     }
   }
- // user.service.ts
 
-// user.service.ts
-// Adjusted likeArticle method within UserService
 likeArticle(articleId: number, token: string): Observable<any> {
   const url = `${this.apiUrl}/like/${articleId}`;
 
-  // Utilize the getHeadersWithAuthorization method to include the token
   const headers = this.getHeadersWithAuthorization();
 
   return this.http.post(url, {}, { headers }).pipe(
     catchError((error: HttpErrorResponse) => {
-      // Handle errors as appropriate
       console.error('Error liking the article:', error);
       return throwError(error);
     })
@@ -88,7 +77,6 @@ likeArticle(articleId: number, token: string): Observable<any> {
     this.setAuthenticated(!!token);
   }
 
-  // ... (other methods)
 
   loginUser(credentials: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/login`, credentials, { withCredentials: true }).pipe(
@@ -151,12 +139,7 @@ likeArticle(articleId: number, token: string): Observable<any> {
   registerUser(email: string, password: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/register`, { email, password });
   }
-// user.service.ts
 
-// ...
-
-
-// ...
 
   setAuthenticated(status: boolean): void {
     this.isAuthenticatedSubject.next(status);
