@@ -27,6 +27,7 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'logout', redirectTo: '/login' }, // Assuming logout is handled elsewhere
+  { path: 'like/:articleId', component: ArticleDetailComponent },
 
 
 

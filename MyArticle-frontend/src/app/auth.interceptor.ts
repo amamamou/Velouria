@@ -14,18 +14,17 @@ import { UserService } from './user.service';
 export class AuthInterceptor implements HttpInterceptor {
   constructor(private authService: UserService) {}
 
-  intercept(
-    request: HttpRequest<any>,
-    next: HttpHandler
-  ): Observable<HttpEvent<any>> {
-    // Add authentication token to the request headers
-    const token = 'your-auth-token'; // Replace with your actual authentication token
+  // auth.interceptor.ts
+intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+  const token = localStorage.getItem('token');
+  if (token) {
     request = request.clone({
       setHeaders: {
         Authorization: `Bearer ${token}`
       }
     });
-
-    return next.handle(request);
   }
+  return next.handle(request);
+}
+
 }

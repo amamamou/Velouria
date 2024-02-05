@@ -1,3 +1,5 @@
+// login.component.ts
+
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from '../user.service';
@@ -36,33 +38,32 @@ export class LoginComponent implements OnInit {
 
     this.userService.loginUser(loginCredentials).subscribe(
       (response) => {
-        console.log('Login response:', response);
-
-        this.userService.setToken(response.token);
-
-        this.userService.setAuthenticated(true);
-
-        this.loginSuccess(response);
-        this.router.navigate(['/article-list']);
-
+        if (response && response.user && response.user.token) {
+          this.loginSuccess(response);
+          this.router.navigate(['/article-list']);
+        } else {
+          this.errorMessage = 'Login failed. Please try again.';
+        }
       },
       (error) => {
         console.error('Login error:', error);
-
-        this.errorMessage = error.error ? error.error : 'Incorrect email or password';
+        this.errorMessage = error.error ? error.error.message : 'An error occurred. Please try again.';
       }
     );
   }
 
-loginSuccess(response: any): void {
- sessionStorage.setItem('token', response.token);
-}
-
+  loginSuccess(response: any): void {
+    console.log('Login Successful. Response:', response);
+    const token = response.user.token;
+    localStorage.setItem('token', token);
+    this.userService.setLoggedInValue(true); // Update loggedIn status in UserService
+    this.router.navigate(['/article-list']);
+  }
 
   onRegister() {
     this.userService.registerUser(this.user.email, this.user.password).subscribe(
       () => {
-     //tombaed
+        // Handle registration success
       },
       (error) => {
         this.errorMessage = error;

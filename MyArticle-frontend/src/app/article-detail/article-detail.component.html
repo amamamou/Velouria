@@ -10,21 +10,24 @@
   <div class="article-top-section">
     <div class="article-title-section">
       <h1 class="article-title">{{ article.title }}</h1>
-      <div *ngIf="article.id !== undefined">
-        <span [class]="article.isLiked ? 'heart-icon liked' : 'heart-icon'" (click)="likeOrRedirect()" title="Like this article">♡</span>
-      </div>
     </div>
     <div class="article-image-section" *ngIf="article.image" [style.background-image]="'url(' + getImageUrl(article.image) + ')'"></div>
   </div>
   <div class="article-bottom-section">
+    <div *ngIf="article.id !== undefined">
+      <span [class]="article.isLiked ? 'heart-icon liked' : 'heart-icon'" (click)="likeOrRedirect()" title="Like this article">♡</span>
+    </div>
     <p class="article-content">{{ article.content }}</p>
     <span class="article-author">By {{ article.author }}</span>
   </div>
+
   <div class="article-actions button-container">
     <button (click)="deleteArticle(article.id)" class="explore-button4">Delete</button> &nbsp;
     <button (click)="updateArticle(article.id)" class="explore-button4">Update</button>
   </div>
+
 </div>
 <div *ngIf="!article" class="article-not-found">
   <p>Article not found.</p>
 </div>
+<br>

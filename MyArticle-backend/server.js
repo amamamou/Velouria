@@ -1,22 +1,24 @@
 const express = require('express');
-const session = require('express-session');
 const bcrypt = require('bcrypt');
 const mysql = require('mysql');
 const util = require('util');
 const cors = require('cors');
 const multer = require('multer');
-const saltRounds = 10;
 const jwt = require('jsonwebtoken');
+const bodyParser = require('body-parser');
+
 
 const app = express();
 app.use(cors({ credentials: true, origin: 'http://localhost:4200' }));
 app.use(express.json());
 
+const secretKey = process.env.JWT_SECRET || 'your-secret-key';
+
 const connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: '',
-  database: 'myarticle'
+  host: process.env.DB_HOST || 'localhost',
+  user: process.env.DB_USER || 'root',
+  password: process.env.DB_PASSWORD || '',
+  database: process.env.DB_NAME || 'myarticle'
 });
 
 connection.connect(error => {
@@ -25,12 +27,6 @@ connection.connect(error => {
 });
 connection.query = util.promisify(connection.query).bind(connection);
 
-app.use(session({
-  secret: 'karam',
-  resave: false,
-  saveUninitialized: true,
-  cookie: { secure: false, sameSite: 'none' }, 
-}));
 app.use('/uploads', express.static('uploads'));
 
 const storage = multer.diskStorage({
@@ -38,15 +34,6 @@ const storage = multer.diskStorage({
   filename: (req, file, cb) => cb(null, Date.now() + '-' + file.originalname)
 });
 const upload = multer({ storage });
-
-const isLoggedIn = (req, res, next) => {
-  if (req.session && req.session.authenticated) {
-    next();
-  } else {
-    res.status(401).json({ error: 'Unauthorized', authenticated: false });
-  }
-};
-
 
 
 
@@ -217,6 +204,11 @@ app.get('/articles/category/:categoryId', (req, res) => {
     });
 });
 
+
+
+//userrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
+
+
 // registration
 app.post('/register', async (req, res) => {
   const { username, email, password } = req.body;
@@ -234,7 +226,6 @@ app.post('/register', async (req, res) => {
   }
 });
 
-// Protected route using isLoggedIn middleware
 /*
 app.get('/users/profile', isLoggedIn, async (req, res) => {
   try {
@@ -266,6 +257,53 @@ app.get('/users/profile', isLoggedIn, async (req, res) => {
   }
 });
 */
+//login
+app.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ error: 'Email and password are required' });
+  }
+
+  try {
+    const users = await connection.query('SELECT * FROM users WHERE email = ? LIMIT 1', [email]);
+
+    if (users.length === 0) {
+      return res.status(401).json({ error: 'Invalid email or password', authenticated: false });
+    }
+
+    const user = users[0];
+    const isPasswordValid = await bcrypt.compare(password, user.password_hash);
+
+    if (isPasswordValid) {
+      const { user_id, username, email, profile_pic, first_name, last_name } = user;
+
+      const expirationTime = Math.floor(Date.now() / 1000) + 60 * 60;
+      const token = jwt.sign({ userId: user_id, exp: expirationTime }, secretKey);
+
+      res.status(200).json({
+        message: 'Logged in successfully',
+        authenticated: true,
+        user: {
+          userId: user_id,
+          username,
+          email,
+          profilePic: profile_pic,
+          firstName: first_name,
+          lastName: last_name,
+          token,
+        },
+      });
+    } else {
+      return res.status(401).json({ error: 'Invalid email or password', authenticated: false, token: null });
+    }
+  } catch (error) {
+    console.error('Database error during login:', error);
+    return res.status(500).json({ error: 'Internal Server Error during login', authenticated: false, token: null });
+  }
+});
+
+/*
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
@@ -311,7 +349,7 @@ app.post('/login', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error', authenticated: false, token: null });
   }
 });
-
+*/
 
 /*
 // Update User Profile
@@ -341,14 +379,88 @@ app.put('/users/profile', isLoggedIn, async (req, res) => {
 */
 // logout
 app.get('/logout', function (req, res) {
-  req.session.destroy(); 
+  // You don't need to destroy the session in JWT-based authentication
   res.json({ message: 'Logged out' });
 });
 
 
+/*app.get('/logout', function (req, res) {
+  req.session.destroy(); 
+  res.json({ message: 'Logged out' });
+});*/
+
+
+
+// middleware function 
+const verifyToken = (req, res, next) => {
+  const token = req.headers.authorization;
+
+  if (!token) {
+    return res.status(401).json({ error: 'Unauthorized - Token not provided' });
+  }
+
+  jwt.verify(token, secretKey, (err, decoded) => {
+    if (err) {
+      return res.status(401).json({ error: 'Unauthorized - Invalid token' });
+    }
+
+    req.userData = decoded;
+    next(); 
+  });
+};
+
+app.post('/like/:articleId', verifyToken, async (req, res) => {
+  const userId = req.userData.userId;
+  const articleId = req.params.articleId;
+
+  try {
+    const isLiked = await checkUserLike(userId, articleId);
+
+    if (isLiked) {
+      return res.status(400).json({ error: 'User has already liked the article.' });
+    }
+
+    const likeResult = await recordLike(userId, articleId);
+
+    if (likeResult) {
+      await updateArticleLikes(articleId);
+      await updateUserLikes(userId);
+
+      res.json({ message: `Article ${articleId} liked by user ${userId}.` });
+    } else {
+      res.status(500).json({ error: 'Failed to like the article.' });
+    }
+  } catch (error) {
+    console.error('Error during like:', error);
+    res.status(500).json({ error: 'Internal Server Error during like.' });
+  }
+});
+
+
+async function checkUserLike(userId, articleId) {
+  const result = await connection.query('SELECT * FROM likes WHERE user_id = ? AND article_id = ?', [userId, articleId]);
+  return result.length > 0;
+}
+
+async function recordLike(userId, articleId) {
+  const result = await connection.query('INSERT INTO likes (user_id, article_id) VALUES (?, ?)', [userId, articleId]);
+  return result.affectedRows > 0;
+}
+
+async function updateArticleLikes(articleId) {
+  await connection.query('UPDATE articles SET number_of_likes = number_of_likes + 1 WHERE id = ?', [articleId]);
+}
+
+async function updateUserLikes(userId) {
+  await connection.query('UPDATE users SET like_id = like_id + 1 WHERE user_id = ?', [userId]);
+}
+
 
 //like
-app.post('/like/:articleId', isLoggedIn, async (req, res) => {
+// POST /like/:articleId - Like an article
+
+
+/*app.post('/like/:articleId', isLoggedIn, async (req, res) => {
   const userId = req.user.user_id;
   const articleId = req.params.articleId;
 
@@ -366,7 +478,7 @@ app.post('/like/:articleId', isLoggedIn, async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error', success: false });
   }
 });
-
+*/
 
 
 const port = 3000;

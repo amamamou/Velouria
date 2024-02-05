@@ -1,35 +1,42 @@
-// user.service.ts
-
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
+import { BehaviorSubject, EMPTY, Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { environment } from 'src/environments/environment';
-import { User } from 'src/user.model';
 import { Router } from '@angular/router';
+import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-  private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
-  private apiUrl = environment.apiUrl;
-  private usersApiUrl = 'http://localhost:3000/users';
+  private apiUrl = 'http://localhost:3000';
   private loggedInSubject = new BehaviorSubject<boolean>(false);
   loggedIn: Observable<boolean> = this.loggedInSubject.asObservable();
 
-  constructor(private router: Router, private http: HttpClient) {
-    this.checkLoginStatus();
+  constructor(private router : Router , private http: HttpClient) {}
+
+  private setLoggedIn(value: boolean): void {
+    this.loggedInSubject.next(value);
   }
-
-
-
-public handleUnauthorizedError(): void {
-  console.error('Unauthorized error. Token may be invalid or expired.');
-
-  this.router.navigate(['/login']);
+  setLoggedInValue(value: boolean): void {
+    this.loggedInSubject.next(value);
+  }
+setTokenPublic(token: string): void {
+  this.setToken(token);
+}
+getLoggedInValue(): boolean {
+  return this.loggedInSubject.value;
 }
 
+
+  private handleUnauthorizedError(): void {
+    console.error('Unauthorized error. Token may be invalid or expired.');
+
+    // Clear token and navigate to login page
+    this.logoutUser();
+    // Redirect to login if needed
+    this.router.navigate(['/login']);
+  }
 
   private getHeadersWithAuthorization(): HttpHeaders {
     const token = this.getToken();
@@ -42,159 +49,97 @@ public handleUnauthorizedError(): void {
     });
   }
 
-  private handleError(error: HttpErrorResponse) {
+  private handleError(error: HttpErrorResponse): Observable<never> {
+    console.error('Handle Error:', error);
     if (error.status === 401) {
       this.handleUnauthorizedError();
-      return throwError('Authentication failed. Please log in again.');
-    } else {
-      return throwError(error.message || 'Server error');
     }
+    return throwError('Something went wrong. Please try again.');
   }
 
-likeArticle(articleId: number, token: string): Observable<any> {
-  const url = `${this.apiUrl}/like/${articleId}`;
-
-  const headers = this.getHeadersWithAuthorization();
-
-  return this.http.post(url, {}, { headers }).pipe(
-    catchError((error: HttpErrorResponse) => {
-      console.error('Error liking the article:', error);
-      return throwError(error);
-    })
-  );
-}
-
-
-  checkAuthentication(): Observable<any> {
-    const jwtToken = this.getToken();
-    const isAuthenticated = !!jwtToken;
-    this.setAuthenticated(isAuthenticated);
-    return of({ authenticated: isAuthenticated });
-  }
-
-  checkLoginStatus() {
-    const token = this.getTokenFromStorage();
-    this.setAuthenticated(!!token);
-  }
-
-
-  loginUser(credentials: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/login`, credentials, { withCredentials: true }).pipe(
-      map(response => {
-        if (response && response.token) {
-          this.setToken(response.token);
-          this.setLoggedIn(true);
-          return response;
-        } else {
-          return { error: 'Invalid response from the server' };
-        }
-      }),
-      catchError(this.handleLoginError)
-    );
-  }
-
-  private handleLoginError(error: HttpErrorResponse) {
-    console.error('Login error:', error);
+  private handleLoginError(error: HttpErrorResponse): Observable<never> {
+    console.error('Login Error:', error);
     return throwError('Login failed. Please check your credentials and try again.');
   }
-
-
-
-
-
-
-  private getTokenFromStorage(): string | null {
-    return localStorage.getItem('token');
-  }
-
-
-
-  logoutUser() {
-    localStorage.removeItem('token');
-    this.setAuthenticated(false);
-  }
-
-  get isAuthenticatedValue(): boolean {
-    return !!this.getTokenFromStorage();
-  }
-
-  hasPermission(permission: string): boolean {
-    return this.isAuthenticatedValue && this.checkPermissionInSession(permission);
-  }
-
-  private checkPermissionInSession(permission: string): boolean {
-    const userPermissions = JSON.parse(sessionStorage.getItem('userPermissions') || '[]');
-    return userPermissions.includes(permission);
-  }
-
-  public getToken(): string | null {
-    return localStorage.getItem('token');
-  }
-
-  setToken(token: string): void {
-    localStorage.setItem('token', token);
-  }
-
-
   registerUser(email: string, password: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/register`, { email, password });
   }
 
 
-  setAuthenticated(status: boolean): void {
-    this.isAuthenticatedSubject.next(status);
+  private decodeToken(token: string): any | null {
+    try {
+      return jwtDecode(token);
+    } catch (error) {
+      console.error('Error decoding token:', error);
+      return null;
+    }
   }
 
-  setLoggedIn(value: boolean): void {
-    this.loggedInSubject.next(value);
+  getToken(): string | null {
+    return localStorage.getItem('token');
   }
 
-
-
-
-  updateUserProfile(updatedProfile: any): Observable<any> {
-    return this.http.put(`${this.usersApiUrl}/profile`, updatedProfile);
-  }
-
-  deleteUserAccount(): Observable<any> {
-    return this.http.delete(`${this.usersApiUrl}/profile`);
-  }
-
-  getLoggedInValue(): boolean {
-    return this.loggedInSubject.getValue();
-  }
-
-  public getUserProfile(): Observable<User> {
-    const url = 'http://localhost:3000/users/profile';
+  isTokenValid(): boolean {
     const token = this.getToken();
-
     if (!token) {
-      this.handleUnauthorizedError();
-      return throwError({ error: 'Token not available' });
+      console.error('Token is not available.');
+      return false;
     }
 
-    const headers = this.getHeadersWithAuthorization();
+    const decoded = this.decodeToken(token);
+    if (!decoded || !decoded.exp) {
+      console.error('Failed to decode token or token does not have an expiration claim.');
+      return false;
+    }
 
-    console.log('Token sent in headers:', token);
+    const isExpired = Date.now() / 1000 >= decoded.exp;
+    if (isExpired) {
+      console.error('Token is expired.');
+      return false;
+    }
 
-    return this.http.get<User>(url, { headers }).pipe(
-      catchError((error: HttpErrorResponse) => {
-        console.log('Error response from server:', error);
+    console.log('Token is valid.');
+    return true;
+  }
 
-        if (error.status === 401) {
-          this.handleUnauthorizedError();
+  loginUser(credentials: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/login`, credentials).pipe(
+      map(response => {
+        if (response && response.user && response.user.token) {
+          const token = response.user.token.trim();
+          if (token) {
+            this.setToken(token);
+            this.setLoggedIn(true);
+            return { success: true, user: response.user };
+          }
         }
-        return throwError(error);
-      })
+        return { success: false, error: 'Invalid response from the server' };
+      }),
+      catchError(this.handleLoginError)
     );
   }
 
-
-  private setSession(userData: any): void {
-    sessionStorage.setItem('userData', JSON.stringify(userData));
+  likeArticle(articleId: string): Observable<any> {
+    if (this.isTokenValid()) {
+      const headers = this.getHeadersWithAuthorization();
+      return this.http.post(`http://localhost:3000/like/${articleId}`, null, { headers });
+    } else {
+      // Handle the case when the token is not valid or not available
+      console.error('Token is not available or expired.');
+      // You can redirect to the login page or handle it as per your requirement
+      // For example, redirecting to the login page:
+      this.router.navigate(['/login']);
+      return EMPTY; // Return an observable or use EMPTY to handle the error in the component
+    }
   }
 
-  private clearSession(): void {
-    sessionStorage.removeItem('userData');
+
+  logoutUser(): void {
+    localStorage.removeItem('token');
+    this.setLoggedIn(false);
+  }
+
+  private setToken(token: string): void {
+    localStorage.setItem('token', token);
   }
 }
