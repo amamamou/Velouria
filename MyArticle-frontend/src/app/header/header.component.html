@@ -1,28 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <!-- Add any other head elements here -->
+
 </head>
 <body>
 
 <nav class="navbar">
     <div class="brand-title" [routerLink]="['/home']">VELOURIA</div>
-    <div class="separator"></div> <!-- Light line -->
+    <div class="separator"></div>
     <div class="navbar-links">
         <ul>
-            <li><button routerLink="/profile">View Profile</button>
-            </li>
+            <li><a href="/profile">View Profile</a></li>
             <li><a href="/login">Sign In</a></li>
             <li><a href="/login" (click)="logout()">Logout</a></li>
-            <li><a href="/create">Fashion</a></li>
-            <!-- Add more list items as needed -->
+            <li><input type="text" placeholder="Search articles..." [(ngModel)]="searchTerm" (keyup.enter)="search()" /></li>
         </ul>
     </div>
 </nav>
+<br><br>
 <script>
   window.addEventListener("scroll", function() {
       const navbarLinks = document.querySelector('.navbar-links');
-      if (window.pageYOffset > 100) { // Adjust 100 to the scroll threshold you prefer
+      if (window.pageYOffset > 100) {
           navbarLinks.classList.add('hidden-links');
       } else {
           navbarLinks.classList.remove('hidden-links');
@@ -33,7 +32,6 @@
 
 
 
-<!-- Rest of your body content goes here -->
 
 </body>
 </html>

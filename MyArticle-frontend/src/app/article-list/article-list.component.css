@@ -8,8 +8,8 @@
 
 .article-card {
   background-color: #f9f9f9;
-  border: 1px solid #ddd;
-  border-radius: 10px;
+  border: 2px solid #ddd;
+  border-radius: 0px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 20px;
   margin: 20px;
@@ -99,8 +99,8 @@
 
 .article-card {
   background-color: #f9f9f9;
-  border: 1px solid #ddd;
-  border-radius: 10px;
+  border: 2px solid #eaeaea; /* Subtle border for the card */
+  border-radius: 2px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   margin: 20px;
   overflow: hidden;
@@ -111,10 +111,9 @@
   height: 200px; /* Adjust as needed */
   background-size: cover;
   background-position: center;
-  border-top-left-radius: 10px; /* Match the card's border radius */
-  border-top-right-radius: 10px;
+  border: 2px solid #fff; /* Pointed border for the image */
+  overflow: hidden;
 }
-
 .article-title {
   font-family: 'Anton', sans-serif; /* Apply Anton font */
   font-size: 1.4em; /* Font size */

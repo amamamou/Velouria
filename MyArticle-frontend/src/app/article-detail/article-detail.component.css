@@ -82,3 +82,88 @@
   color: red;
 }
 
+/* Add this to your existing CSS styles */
+.article-interaction-section {
+  display: flex;
+  align-items: center;
+  margin-top: 10px; /* Adjust as needed */
+}
+
+.heart-icon,
+.comment-icon {
+  font-size: 18px; /* Adjust as needed */
+  cursor: pointer;
+  margin-right: 10px; /* Adjust as needed */
+}
+
+.comment-icon {
+  color: #000000; /* Comment icon color */
+}
+/* article-detail.component.css */
+
+.comment-container {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 0px;
+  padding: 15px;
+  margin-top: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.comment {
+  margin-bottom: 15px;
+  position: relative; /* Set position relative for absolute positioning of the line */
+
+}
+.comment::after {
+  content: ''; /* Add content to create the line */
+  position: absolute; /* Position the line */
+  bottom: 0; /* Align the line to the bottom of the comment */
+  left: 0; /* Align the line to the left */
+  width: 100%; /* Make the line full width */
+  height: 1px; /* Set the height of the line */
+  background-color: #e0e0e0; /* Set the color of the line */
+}
+.comment-content {
+  display: flex;
+  align-items: center;
+}
+
+.comment-username {
+  font-weight: bold;
+  margin-right: 10px;
+  color: #333;
+}
+
+.comment-text {
+  color: #555;
+}
+.comment-input {
+  margin-top: 20px;
+  display: flex; /* Make the input and button appear in a row */
+  align-items: center; /* Align items vertically in the center */
+}
+
+.comment-input input {
+  flex: 1; /* Let the input field grow to fill available space */
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.comment-input button {
+  width: 30px;
+  height: 30px;
+  margin-left: 10px; /* Add some space between the input and button */
+  background-color: #f0ebeb;
+  color: #888;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.comment-input button:hover {
+  background-color: #dcd6d6;
+}

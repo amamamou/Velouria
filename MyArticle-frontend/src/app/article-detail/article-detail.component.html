@@ -5,6 +5,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Rouge+Script&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+<!-- In your HTML file -->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
 
 <div *ngIf="article" class="article-container">
   <div class="article-top-section">
@@ -13,20 +17,39 @@
     </div>
     <div class="article-image-section" *ngIf="article.image" [style.background-image]="'url(' + getImageUrl(article.image) + ')'"></div>
   </div>
+
   <div class="article-bottom-section">
-    <div *ngIf="article.id !== undefined">
-      <span [class]="article.isLiked ? 'heart-icon liked' : 'heart-icon'" (click)="likeOrRedirect()" title="Like this article">♡</span>
-    </div>
     <p class="article-content">{{ article.content }}</p>
     <span class="article-author">By {{ article.author }}</span>
   </div>
-
-  <div class="article-actions button-container">
-    <button (click)="deleteArticle(article.id)" class="explore-button4">Delete</button> &nbsp;
-    <button (click)="updateArticle(article.id)" class="explore-button4">Update</button>
+  <div class="article-interaction-section">
+    <span [class]="article.isLiked ? 'heart-icon liked' : 'heart-icon'" (click)="likeOrRedirect()" title="Like this article">♡</span>
+    <span class="comment-icon" title="Comment on this article" (click)="toggleCommentContainer()">comment</span>
   </div>
 
+  <hr class="article-separator"> <!-- Add this line for the separator -->
+  <span class="likes-info">Likes: {{ article && article.id !== undefined ? (articleLikes[+article.id] || 0) : 0 }}</span> &nbsp;
+  <span class="comments-info">Comments: {{ article && article.id !== undefined ? (articleComments[+article.id] || 0) : 0 }}</span>
+<div class="comment-container" *ngIf="showCommentContainer">
+  <div class="comments">
+    <div *ngFor="let comment of articleCommentss" class="comment">
+      <div class="comment-content">
+          <span class="comment-username">@{{ comment.username }}</span>
+          <p class="comment-text">{{ comment.comment_text }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="comment-input">
+    <input type="text" placeholder="Write a comment...">
+    <button class="send-button">&#10148;</button>
+  </div>
 </div>
+
+
+
+
+</div>
+
 <div *ngIf="!article" class="article-not-found">
   <p>Article not found.</p>
 </div>

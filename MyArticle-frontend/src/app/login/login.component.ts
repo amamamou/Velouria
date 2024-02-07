@@ -1,5 +1,3 @@
-// login.component.ts
-
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from '../user.service';
@@ -28,36 +26,41 @@ export class LoginComponent implements OnInit {
 
   constructor(private userService: UserService, private router: Router) {}
 
-  ngOnInit(): void {}
-
-  onUserLogin() {
-    const loginCredentials = {
-      email: this.user.email,
-      password: this.user.password
-    };
-
-    this.userService.loginUser(loginCredentials).subscribe(
-      (response) => {
-        if (response && response.user && response.user.token) {
-          this.loginSuccess(response);
+  ngOnInit(): void {
+    // Check session status when the component initializes
+    this.userService.checkSessionStatus().subscribe(
+      loggedIn => {
+        if (loggedIn) {
+          // User is already logged in, redirect to article list
           this.router.navigate(['/article-list']);
-        } else {
-          this.errorMessage = 'Login failed. Please try again.';
         }
       },
-      (error) => {
-        console.error('Login error:', error);
-        this.errorMessage = error.error ? error.error.message : 'An error occurred. Please try again.';
+      error => {
+        console.error('Error checking session status:', error);
+        this.errorMessage = 'An error occurred while checking session status.';
       }
     );
   }
 
-  loginSuccess(response: any): void {
-    console.log('Login Successful. Response:', response);
-    const token = response.user.token;
-    localStorage.setItem('token', token);
-    this.userService.setLoggedInValue(true); // Update loggedIn status in UserService
-    this.router.navigate(['/article-list']);
+  onUserLogin() {
+    this.userService.loginUser(this.user).subscribe(
+      (response) => {
+        console.log('Login response:', response);
+        if (response && response.success) {
+          this.router.navigate(['/article-list']);
+        } else if (response && response.error) {
+          console.error('Login error:', response.error);
+          this.errorMessage = response.error;
+        } else {
+          console.error('Invalid response from the server');
+          this.errorMessage = 'Invalid response from the server';
+        }
+      },
+      (error) => {
+        console.error('Login error:', error);
+        this.errorMessage = error.message || 'An error occurred during login.';
+      }
+    );
   }
 
   onRegister() {
@@ -66,7 +69,8 @@ export class LoginComponent implements OnInit {
         // Handle registration success
       },
       (error) => {
-        this.errorMessage = error;
+        console.error('Registration error:', error);
+        this.errorMessage = error.message || 'An error occurred during registration.';
       }
     );
   }

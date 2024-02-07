@@ -1,18 +1,35 @@
 const express = require('express');
-const bcrypt = require('bcrypt');
+const session = require('express-session');
+const MySQLStore = require('express-mysql-session')(session);
 const mysql = require('mysql');
 const util = require('util');
 const cors = require('cors');
 const multer = require('multer');
-const jwt = require('jsonwebtoken');
-const bodyParser = require('body-parser');
-
+const bcrypt = require('bcrypt');
 
 const app = express();
 app.use(cors({ credentials: true, origin: 'http://localhost:4200' }));
 app.use(express.json());
 
 const secretKey = process.env.JWT_SECRET || 'your-secret-key';
+
+const sessionStore = new MySQLStore({
+  host: process.env.DB_HOST || 'localhost',
+  user: process.env.DB_USER || 'root',
+  password: process.env.DB_PASSWORD || '',
+  database: process.env.DB_NAME || 'myarticle'
+});
+app.use(session({
+  secret: 'your-secret-key', 
+  resave: false,
+  saveUninitialized: true,
+  store: sessionStore,
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 24, // Session duration in milliseconds (1 day)
+    secure: false, 
+    httpOnly: true,
+  }
+}));
 
 const connection = mysql.createConnection({
   host: process.env.DB_HOST || 'localhost',
@@ -35,9 +52,22 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
+const isAuthenticated = (req, res, next) => {
+  if (req.session.authenticated) {
+    next();
+  } else {
+    res.status(401).json({ error: 'Unauthorized', authenticated: false });
+  }
+};
 
-
-// POST /articles - 
+// Endpoint to check session status
+app.get('/session-check', (req, res) => {
+  if (req.session.user) {
+    res.json({ loggedIn: true, user: req.session.user });
+  } else {
+    res.json({ loggedIn: false });
+  }
+});
 
 // POST /articles - Create a new article
 app.post('/articles', upload.single('image'), (req, res) => {
@@ -104,6 +134,19 @@ app.delete('/articles/:id', (req, res) => {
     res.json({ message: 'Article deleted' });
   });
 });
+
+// search
+app.get('/articles/search/:term', (req, res) => {
+  const searchTerm = '%' + req.params.term + '%'; // Using % for SQL LIKE
+  connection.query('SELECT * FROM articles WHERE title LIKE ?', [searchTerm], (error, results) => {
+    if (error) {
+      console.error("Error fetching articles:", error);
+      return res.status(500).send(error);
+    }
+    res.json(results);
+  });
+});
+
 
 
 
@@ -257,7 +300,7 @@ app.get('/users/profile', isLoggedIn, async (req, res) => {
   }
 });
 */
-//login
+// Login endpoint
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
@@ -278,164 +321,70 @@ app.post('/login', async (req, res) => {
     if (isPasswordValid) {
       const { user_id, username, email, profile_pic, first_name, last_name } = user;
 
-      const expirationTime = Math.floor(Date.now() / 1000) + 60 * 60;
-      const token = jwt.sign({ userId: user_id, exp: expirationTime }, secretKey);
+      req.session.authenticated = true;
+      req.session.user = {
+        userId: user_id,
+        username,
+        email,
+        profilePic: profile_pic,
+        firstName: first_name,
+        lastName: last_name,
+      };
 
       res.status(200).json({
         message: 'Logged in successfully',
         authenticated: true,
-        user: {
-          userId: user_id,
-          username,
-          email,
-          profilePic: profile_pic,
-          firstName: first_name,
-          lastName: last_name,
-          token,
-        },
+        user: req.session.user,
       });
     } else {
-      return res.status(401).json({ error: 'Invalid email or password', authenticated: false, token: null });
+      return res.status(401).json({ error: 'Invalid email or password', authenticated: false });
     }
   } catch (error) {
     console.error('Database error during login:', error);
-    return res.status(500).json({ error: 'Internal Server Error during login', authenticated: false, token: null });
+    return res.status(500).json({ error: 'Internal Server Error during login', authenticated: false });
   }
 });
 
-/*
-app.post('/login', async (req, res) => {
-  const { email, password } = req.body;
-
-  if (!email || !password) {
-    return res.status(400).json({ error: 'Email and password are required' });
-  }
-
-  try {
-    const users = await connection.query('SELECT * FROM users WHERE email = ?', [email]);
-
-    if (users.length === 0) {
-      return res.status(401).json({ error: 'Incorrect email or password', authenticated: false });
-    }
-
-    const user = users[0];
-
-    const isPasswordValid = await bcrypt.compare(password, user.password_hash);
-
-    if (isPasswordValid) {
-      req.session.authenticated = true;
-      req.session.userId = user.user_id;
-      req.session.save();  // Save the session immediately
-
-      const token = jwt.sign({ userId: user.user_id }, 'karam', { expiresIn: '1h' });
-
-
-      res.status(200).json({
-        message: 'Logged in successfully',
-        authenticated: true,
-        userId: user.user_id,
-        username: user.username,
-        email: user.email,
-        profile_pic: user.profile_pic,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        token: token  
-      });
-    } else {
-      res.status(401).json({ error: 'Incorrect email or password', authenticated: false, token: null });
-    }
-  } catch (error) {
-    console.error('Database error:', error);
-    res.status(500).json({ error: 'Internal Server Error', authenticated: false, token: null });
-  }
-});
-*/
-
-/*
-// Update User Profile
-app.put('/users/profile', isLoggedIn, async (req, res) => {
-  const { username, email, first_name, last_name, profile_pic } = req.body;
-  let query = 'UPDATE users SET ';
-  let values = [];
-
-  if (username) { query += 'username = ?, '; values.push(username); }
-  if (email) { query += 'email = ?, '; values.push(email); }
-  if (first_name) { query += 'first_name = ?, '; values.push(first_name); }
-  if (last_name) { query += 'last_name = ?, '; values.push(last_name); }
-  if (profile_pic) { query += 'profile_pic = ?, '; values.push(profile_pic); }
-
-  query = query.slice(0, -2);
-  query += ' WHERE user_id = ?';
-  values.push(req.session.userId);
-
-  try {
-    await connection.query(query, values);
-    res.json({ message: 'Profile updated successfully' });
-  } catch (error) {
-    console.error('Error updating profile:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-*/
-// logout
-app.get('/logout', function (req, res) {
-  // You don't need to destroy the session in JWT-based authentication
-  res.json({ message: 'Logged out' });
-});
-
-
-/*app.get('/logout', function (req, res) {
-  req.session.destroy(); 
-  res.json({ message: 'Logged out' });
-});*/
-
-
-
-// middleware function 
-const verifyToken = (req, res, next) => {
-  const token = req.headers.authorization;
-
-  if (!token) {
-    return res.status(401).json({ error: 'Unauthorized - Token not provided' });
-  }
-
-  jwt.verify(token, secretKey, (err, decoded) => {
+// Logout endpoint
+app.post('/logout', isAuthenticated, (req, res) => {
+  req.session.destroy(err => {
     if (err) {
-      return res.status(401).json({ error: 'Unauthorized - Invalid token' });
+      console.error('Error destroying session:', err);
+      res.status(500).json({ error: 'Internal Server Error during logout' });
+    } else {
+      res.status(200).json({ message: 'Logged out successfully' });
     }
-
-    req.userData = decoded;
-    next(); 
   });
-};
+});
 
-app.post('/like/:articleId', verifyToken, async (req, res) => {
-  const userId = req.userData.userId;
+// Like article endpoint
+app.post('/like-article/:articleId', isAuthenticated, async (req, res) => {
+  const userId = req.session.user.userId;
   const articleId = req.params.articleId;
 
   try {
-    const isLiked = await checkUserLike(userId, articleId);
+    // Check if the user has already liked the article
+    const hasLiked = await checkUserLike(userId, articleId);
 
-    if (isLiked) {
-      return res.status(400).json({ error: 'User has already liked the article.' });
+    if (hasLiked) {
+      return res.status(400).json({ error: 'You have already liked this article' });
     }
 
-    const likeResult = await recordLike(userId, articleId);
-
-    if (likeResult) {
-      await updateArticleLikes(articleId);
-      await updateUserLikes(userId);
-
-      res.json({ message: `Article ${articleId} liked by user ${userId}.` });
-    } else {
-      res.status(500).json({ error: 'Failed to like the article.' });
+    // Record the like
+    const likeRecorded = await recordLike(userId, articleId);
+    if (!likeRecorded) {
+      return res.status(500).json({ error: 'Failed to record like' });
     }
+
+    // Update the number of likes for the article
+    await updateArticleLikes(articleId);
+
+    res.status(200).json({ message: 'Article liked successfully' });
   } catch (error) {
-    console.error('Error during like:', error);
-    res.status(500).json({ error: 'Internal Server Error during like.' });
+    console.error('Error liking article:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-
 
 async function checkUserLike(userId, articleId) {
   const result = await connection.query('SELECT * FROM likes WHERE user_id = ? AND article_id = ?', [userId, articleId]);
@@ -451,34 +400,64 @@ async function updateArticleLikes(articleId) {
   await connection.query('UPDATE articles SET number_of_likes = number_of_likes + 1 WHERE id = ?', [articleId]);
 }
 
-async function updateUserLikes(userId) {
-  await connection.query('UPDATE users SET like_id = like_id + 1 WHERE user_id = ?', [userId]);
-}
 
-
-//like
-// POST /like/:articleId - Like an article
-
-
-/*app.post('/like/:articleId', isLoggedIn, async (req, res) => {
-  const userId = req.user.user_id;
-  const articleId = req.params.articleId;
-
-  try {
-    const [existingLike] = await connection.query('SELECT * FROM likes WHERE user_id = ? AND article_id = ?', [userId, articleId]);
-
-    if (existingLike.length === 0) {
-      await connection.query('INSERT INTO likes (user_id, article_id) VALUES (?, ?)', [userId, articleId]);
-      res.json({ message: 'Like added successfully', success: true });
+//likes w comments 
+app.get('/api/article-comments', (req, res) => {
+  const query = `
+    SELECT article_id, COUNT(*) AS comment_count
+    FROM comments
+    GROUP BY article_id;
+  `;
+  connection.query(query, (error, results) => {
+    if (error) {
+      console.error('Error counting comments:', error);
+      res.status(500).json({ error: 'Internal server error' });
     } else {
-=      res.status(400).json({ message: 'Article already liked by the user', success: false });
+      res.status(200).json(results);
     }
+  });
+});
+app.get('/api/article-likes', (req, res) => {
+  const query = `
+    SELECT article_id, COUNT(*) AS like_count
+    FROM likes
+    GROUP BY article_id;
+  `;
+  connection.query(query, (error, results) => {
+    if (error) {
+      console.error('Error counting likes:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    } else {
+      res.status(200).json(results);
+    }
+  });
+});
+
+
+app.get('/api/articles/:articleId/comments', async (req, res) => {
+  const articleId = req.params.articleId;
+  if (!articleId) {
+    return res.status(400).json({ error: 'Article ID is required' });
+  }
+  
+  try {
+    const query = `
+      SELECT c.*, u.username 
+      FROM comments c 
+      INNER JOIN users u ON c.user_id = u.user_id
+      WHERE c.article_id = ? 
+      ORDER BY c.created_at DESC
+    `;
+    const comments = await connection.query(query, [articleId]);
+    res.json(comments);
   } catch (error) {
-    console.error('Error processing like:', error);
-    res.status(500).json({ message: 'Internal Server Error', success: false });
+    console.error('Failed to fetch comments:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
-*/
+
+
+
 
 
 const port = 3000;

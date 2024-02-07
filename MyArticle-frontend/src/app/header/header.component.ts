@@ -9,6 +9,7 @@ import { NavigationEnd, Router } from '@angular/router';
 })
 export class HeaderComponent implements OnInit {
   userId: string = '1'; // Assign the actual user ID here
+  searchTerm: string = '';
 
   constructor(private articleService: ArticleService, private router : Router) {   this.router.events.subscribe((event) => {
     if (event instanceof NavigationEnd) {
@@ -27,6 +28,10 @@ export class HeaderComponent implements OnInit {
     this.router.navigate(['/profile', userId]);
   }
 
-
-
+  search(): void {
+    if (this.searchTerm.trim() !== '') {
+      // Navigate to search-results page with search term as a parameter
+      this.router.navigate(['/search-results', { term: this.searchTerm }]);
+    }
+}
 }

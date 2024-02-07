@@ -1,0 +1,11 @@
+<br><br><br>
+<div class="search-container">
+  <div class="article-container">
+    <div *ngFor="let article of articles" class="article-card">
+      <div class="article-image" [style.background-image]="'url(' + getImageUrl(article.image) + ')'" [routerLink]="['/article', article.id]">
+      </div>
+
+      <h2 class="article-title">{{ article.title }}</h2>
+    </div>
+  </div>
+</div>

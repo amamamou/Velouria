@@ -15,10 +15,27 @@ export class ArticleService {
 
   constructor(private http: HttpClient) { }
 
+  getAllArticleComments(articleId: number): Observable<Comment[]> {
+    return this.http.get<Comment[]>(`${this.apiUrl}/api/articles/${articleId}/comments`);
+  }
+
+  getArticleLikes(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/api/article-likes`);
+  }
+
+  getArticleComments(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/api/article-comments`);
+  }
+  getArticlesBySearchTerm(term: string): Observable<Article[]> {
+    return this.http.get<Article[]>(`${this.apiUrl}/articles/search/${term}`);
+  }
+
+
+
   createArticle(articleData: FormData): Observable<any> {
     return this.http.post(`${this.apiUrl}/articles`, articleData);
   }
-  
+
 
 
 

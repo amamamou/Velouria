@@ -8,7 +8,7 @@ import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { ArticleCategoryComponent } from './article-category/article-category.component';
-import { AuthGuard } from 'src/auth.guard';
+import { ArticleSearchComponent } from './article-search/article-search.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -28,6 +28,7 @@ const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'logout', redirectTo: '/login' }, // Assuming logout is handled elsewhere
   { path: 'like/:articleId', component: ArticleDetailComponent },
+  { path: 'search-results', component: ArticleSearchComponent }
 
 
 

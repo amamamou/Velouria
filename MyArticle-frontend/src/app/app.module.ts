@@ -18,8 +18,7 @@ import { ArticleCategoryComponent } from './article-category/article-category.co
 import { DefaultImagePipe } from 'src/default-image.pipe';
 import { EditProfileComponent } from './edit-profile/edit-profile.component';
 import { CommonModule } from '@angular/common';
-import { AuthGuard } from 'src/auth.guard';
-import { AuthInterceptor } from './auth.interceptor';
+import { ArticleSearchComponent } from './article-search/article-search.component';
 
 @NgModule({
   declarations: [
@@ -37,6 +36,7 @@ import { AuthInterceptor } from './auth.interceptor';
     ArticleCategoryComponent,
     DefaultImagePipe,
     EditProfileComponent,
+    ArticleSearchComponent,
 
 
   ],
@@ -52,11 +52,7 @@ import { AuthInterceptor } from './auth.interceptor';
 
 
   ],
-  providers: [ {
-    provide: HTTP_INTERCEPTORS,
-    useClass: AuthInterceptor,
-    multi: true
-  }],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
