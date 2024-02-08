@@ -5,6 +5,6 @@ export interface Article {
   author: string;
   image: string ;
   category_id: number;
-  isLiked?: number; // Add this line
+  isLiked?: boolean; // Keep the type as boolean
 
 }

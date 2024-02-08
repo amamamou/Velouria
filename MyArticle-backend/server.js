@@ -1,35 +1,18 @@
 const express = require('express');
-const session = require('express-session');
-const MySQLStore = require('express-mysql-session')(session);
 const mysql = require('mysql');
 const util = require('util');
 const cors = require('cors');
 const multer = require('multer');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken'); // Added JWT
+
 
 const app = express();
 app.use(cors({ credentials: true, origin: 'http://localhost:4200' }));
 app.use(express.json());
 
-const secretKey = process.env.JWT_SECRET || 'your-secret-key';
 
-const sessionStore = new MySQLStore({
-  host: process.env.DB_HOST || 'localhost',
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'myarticle'
-});
-app.use(session({
-  secret: 'your-secret-key', 
-  resave: false,
-  saveUninitialized: true,
-  store: sessionStore,
-  cookie: {
-    maxAge: 1000 * 60 * 60 * 24, // Session duration in milliseconds (1 day)
-    secure: false, 
-    httpOnly: true,
-  }
-}));
+const secretKey = process.env.JWT_SECRET || 'your-secret-key'; // Secret key for JWT
 
 const connection = mysql.createConnection({
   host: process.env.DB_HOST || 'localhost',
@@ -52,22 +35,33 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
+
 const isAuthenticated = (req, res, next) => {
-  if (req.session.authenticated) {
-    next();
-  } else {
-    res.status(401).json({ error: 'Unauthorized', authenticated: false });
+  const token = req.headers.authorization?.split(" ")[1]; 
+
+  if (!token) {
+    return res.status(401).json({ error: 'Unauthorized', authenticated: false });
   }
+
+  jwt.verify(token, secretKey, (err, decoded) => {
+    if (err) {
+      return res.status(401).json({ error: 'Unauthorized', authenticated: false });
+    }
+
+    req.user = decoded; 
+    next();
+  });
 };
 
 // Endpoint to check session status
-app.get('/session-check', (req, res) => {
-  if (req.session.user) {
-    res.json({ loggedIn: true, user: req.session.user });
-  } else {
-    res.json({ loggedIn: false });
-  }
+app.get('/session-check', isAuthenticated, (req, res) => {
+  res.json({ loggedIn: true, user: req.user });
 });
+
+
+
+
+
 
 // POST /articles - Create a new article
 app.post('/articles', upload.single('image'), (req, res) => {
@@ -250,6 +244,61 @@ app.get('/articles/category/:categoryId', (req, res) => {
 
 
 //userrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
+//likes w comments 
+app.get('/api/article-comments', (req, res) => {
+  const query = `
+    SELECT article_id, COUNT(*) AS comment_count
+    FROM comments
+    GROUP BY article_id;
+  `;
+  connection.query(query, (error, results) => {
+    if (error) {
+      console.error('Error counting comments:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    } else {
+      res.status(200).json(results);
+    }
+  });
+});
+app.get('/api/article-likes', (req, res) => {
+  const query = `
+    SELECT article_id, COUNT(*) AS like_count
+    FROM likes
+    GROUP BY article_id;
+  `;
+  connection.query(query, (error, results) => {
+    if (error) {
+      console.error('Error counting likes:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    } else {
+      res.status(200).json(results);
+    }
+  });
+});
+
+
+app.get('/api/articles/:articleId/comments', async (req, res) => {
+  const articleId = req.params.articleId;
+  if (!articleId) {
+    return res.status(400).json({ error: 'Article ID is required' });
+  }
+  
+  try {
+    const query = `
+      SELECT c.*, u.username 
+      FROM comments c 
+      INNER JOIN users u ON c.user_id = u.user_id
+      WHERE c.article_id = ? 
+      ORDER BY c.created_at DESC
+    `;
+    const comments = await connection.query(query, [articleId]);
+    res.json(comments);
+  } catch (error) {
+    console.error('Failed to fetch comments:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 
 
 // registration
@@ -321,8 +370,7 @@ app.post('/login', async (req, res) => {
     if (isPasswordValid) {
       const { user_id, username, email, profile_pic, first_name, last_name } = user;
 
-      req.session.authenticated = true;
-      req.session.user = {
+      const userForToken = {
         userId: user_id,
         username,
         email,
@@ -331,10 +379,15 @@ app.post('/login', async (req, res) => {
         lastName: last_name,
       };
 
+      const token = jwt.sign(userForToken, secretKey, {
+        expiresIn: '24h', // Token expires in 24 hours
+      });
+
       res.status(200).json({
         message: 'Logged in successfully',
         authenticated: true,
-        user: req.session.user,
+        token, // Send the token to the client
+        user: userForToken,
       });
     } else {
       return res.status(401).json({ error: 'Invalid email or password', authenticated: false });
@@ -344,22 +397,54 @@ app.post('/login', async (req, res) => {
     return res.status(500).json({ error: 'Internal Server Error during login', authenticated: false });
   }
 });
-
 // Logout endpoint
 app.post('/logout', isAuthenticated, (req, res) => {
-  req.session.destroy(err => {
-    if (err) {
-      console.error('Error destroying session:', err);
-      res.status(500).json({ error: 'Internal Server Error during logout' });
-    } else {
-      res.status(200).json({ message: 'Logged out successfully' });
-    }
-  });
+  res.status(200).json({ message: 'Logged out successfully' });
 });
+
+
+// Comment article endpoint
+app.post('/add-comment/:articleId', isAuthenticated, async (req, res) => {
+  const userId = req.user.userId; // Use req.user instead of req.session.user
+  const articleId = req.params.articleId;
+  const { commentText } = req.body;
+
+  try {
+    // Record the comment
+    const commentRecorded = await recordComment(userId, articleId, commentText);
+    if (!commentRecorded) {
+      return res.status(500).json({ error: 'Failed to record comment' });
+    }
+
+    res.status(201).json({ success: true, message: 'Comment added successfully' });
+  } catch (error) {
+    console.error('Error adding comment:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Function to record a comment in the database
+async function recordComment(userId, articleId, commentText) {
+  try {
+    const sql = 'INSERT INTO comments (article_id, user_id, comment_text, created_at, updated_at) VALUES (?, ?, ?, NOW(), NOW())';
+    const result = await connection.query(sql, [articleId, userId, commentText]);
+    if (result.affectedRows > 0) {
+      return true; // Comment successfully recorded
+    } else {
+      return false; // No rows affected, comment recording failed
+    }
+  } catch (error) {
+    console.error('Error recording comment:', error);
+    return false;
+  }
+}
+
+
+
 
 // Like article endpoint
 app.post('/like-article/:articleId', isAuthenticated, async (req, res) => {
-  const userId = req.session.user.userId;
+  const userId = req.user.userId; // Use req.user instead of req.session.user
   const articleId = req.params.articleId;
 
   try {
@@ -376,8 +461,7 @@ app.post('/like-article/:articleId', isAuthenticated, async (req, res) => {
       return res.status(500).json({ error: 'Failed to record like' });
     }
 
-    // Update the number of likes for the article
-    await updateArticleLikes(articleId);
+
 
     res.status(200).json({ message: 'Article liked successfully' });
   } catch (error) {
@@ -396,68 +480,66 @@ async function recordLike(userId, articleId) {
   return result.affectedRows > 0;
 }
 
-async function updateArticleLikes(articleId) {
-  await connection.query('UPDATE articles SET number_of_likes = number_of_likes + 1 WHERE id = ?', [articleId]);
-}
+app.get('/check-like/:userId/:articleId', isAuthenticated, async (req, res) => {
+  const { userId, articleId } = req.params;
+  console.log(`Checking like status for user ${userId} on article ${articleId}`);
 
-
-//likes w comments 
-app.get('/api/article-comments', (req, res) => {
-  const query = `
-    SELECT article_id, COUNT(*) AS comment_count
-    FROM comments
-    GROUP BY article_id;
-  `;
-  connection.query(query, (error, results) => {
-    if (error) {
-      console.error('Error counting comments:', error);
-      res.status(500).json({ error: 'Internal server error' });
-    } else {
-      res.status(200).json(results);
-    }
-  });
-});
-app.get('/api/article-likes', (req, res) => {
-  const query = `
-    SELECT article_id, COUNT(*) AS like_count
-    FROM likes
-    GROUP BY article_id;
-  `;
-  connection.query(query, (error, results) => {
-    if (error) {
-      console.error('Error counting likes:', error);
-      res.status(500).json({ error: 'Internal server error' });
-    } else {
-      res.status(200).json(results);
-    }
-  });
-});
-
-
-app.get('/api/articles/:articleId/comments', async (req, res) => {
-  const articleId = req.params.articleId;
-  if (!articleId) {
-    return res.status(400).json({ error: 'Article ID is required' });
-  }
-  
   try {
-    const query = `
-      SELECT c.*, u.username 
-      FROM comments c 
-      INNER JOIN users u ON c.user_id = u.user_id
-      WHERE c.article_id = ? 
-      ORDER BY c.created_at DESC
-    `;
-    const comments = await connection.query(query, [articleId]);
-    res.json(comments);
+    const hasLiked = await checkUserLike(userId, articleId);
+    console.log(`Like status for user ${userId} on article ${articleId}: ${hasLiked}`);
+    res.json({ liked: hasLiked });
   } catch (error) {
-    console.error('Failed to fetch comments:', error);
+    console.error('Error checking if user has liked article:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+//profilou (connecté)
+app.get('/profile', isAuthenticated, async (req, res) => {
+  try {
+    const userId = req.user.userId; // Get the authenticated user's ID from the decoded token
+    const user = await getUserInfo(userId);
+    if (user) {
+      res.json({ user });
+    } else {
+      res.status(404).json({ error: 'User not found' });
+    }
+  } catch (error) {
+    console.error('Error fetching user information:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Function to get user information from the database
+async function getUserInfo(userId) {
+  try {
+    const sql = 'SELECT * FROM users WHERE user_id = ?';
+    const [user] = await connection.query(sql, [userId]);
+    return user;
+  } catch (error) {
+    console.error('Error fetching user information from the database:', error);
+    throw error;
+  }
+}
+// Endpoint to fetch articles liked by the authenticated user
+app.get('/liked-articles', isAuthenticated, async (req, res) => {
+  try {
+    const userId = req.user.userId; // Extract user ID from the authenticated user's token
+
+    // Query the database to retrieve articles liked by the user
+    const likedArticles = await connection.query(`
+      SELECT articles.*
+      FROM likes
+      INNER JOIN articles ON likes.article_id = articles.id
+      WHERE likes.user_id = ?
+    `, [userId]);
+
+    res.json({ likedArticles });
+  } catch (error) {
+    console.error('Error fetching liked articles:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-
-
-
 
 
 const port = 3000;

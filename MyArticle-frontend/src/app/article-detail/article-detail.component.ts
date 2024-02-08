@@ -5,7 +5,6 @@ import { Article } from '../article.model';
 import { UserService } from '../user.service';
 import { Comment } from '../comment.model';
 
-
 @Component({
   selector: 'app-article-detail',
   templateUrl: './article-detail.component.html',
@@ -15,9 +14,12 @@ export class ArticleDetailComponent implements OnInit {
   articleId: string | null = null;
   article: Article | undefined;
   articleCommentss: Comment[] = [];
-  articleLikes: { [key: number]: number } = {}; // Define articleLikes with type
-  articleComments: { [key: number]: number } = {}; // Define articleComments with type
+  articleLikes: { [key: number]: number } = {};
+  articleComments: { [key: number]: number } = {};
   showCommentContainer = false;
+  userLikedArticle = false; // Add this property to track if the user liked the article
+  newCommentText: string = ''; // Property to bind to the input field
+
 
   constructor(
     private route: ActivatedRoute,
@@ -27,7 +29,6 @@ export class ArticleDetailComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-
     this.route.params.subscribe((params) => {
       this.articleId = params['id'];
       if (this.articleId) {
@@ -36,9 +37,63 @@ export class ArticleDetailComponent implements OnInit {
         this.loadArticleComments();
         this.getAllArticleComments(+this.articleId);
 
+      } else {
+        console.error('Article ID is undefined.');
       }
     });
   }
+
+  addComment(): void {
+    this.userService.checkSessionStatus().subscribe(
+      (loggedIn) => {
+        if (loggedIn) {
+          // Ensure articleId is available and newCommentText is not empty
+          if (this.article && this.articleId && this.newCommentText.trim()) {
+            // Call the service to add the comment
+            this.userService.addComment(this.articleId, this.newCommentText).subscribe(
+              (response) => {
+                console.log('Comment response:', response);
+                console.log('Comment added successfully');
+                if (this.articleId) {
+                  this.getAllArticleComments(+this.articleId); // Convert string to number and ensure it's not null
+                } else {
+                  console.error('Article ID is null or undefined.');
+                }
+                this.loadArticleComments(); // Refresh article likes after liking
+
+                this.newCommentText = '';
+              },
+              (error) => {
+                console.error('Error adding the comment:', error);
+                // Check error status and handle accordingly
+                if (error.status === 401) {
+                  console.log('User not logged in');
+                  // Redirect to login page
+                  this.redirectToLogin();
+                } else {
+                  // Handle other errors if needed
+                }
+              }
+            );
+          } else {
+            console.error('Article not available or comment text is empty');
+          }
+        } else {
+          console.log('User not logged in, redirecting to login...');
+          // Redirect to login page
+          this.redirectToLogin();
+        }
+      },
+      (error) => {
+        console.error('Error checking session status:', error);
+        // Redirect to login page
+        this.redirectToLogin();
+      }
+    );
+  }
+
+
+
 
   loadArticle(articleId: string): void {
     this.articleService.getArticleById(articleId).subscribe(
@@ -51,29 +106,26 @@ export class ArticleDetailComponent implements OnInit {
       }
     );
   }
+
   likeOrRedirect(): void {
-    // Check the user's session status before attempting to like the article
     this.userService.checkSessionStatus().subscribe(
       (loggedIn) => {
         if (loggedIn) {
-          // If the user is logged in, proceed with liking the article
           if (this.article && this.article.id) {
             this.userService.likeArticle(this.article.id.toString()).subscribe(
               (response) => {
                 console.log('Like response:', response);
                 console.log('Article liked successfully');
+                this.loadArticleLikes(); // Refresh article likes after liking
+
               },
               (error) => {
                 console.error('Error liking the article:', error);
                 console.log('Error status:', error.status);
                 console.log('Error message:', error.message);
                 console.log('Error body:', error.error);
-                // Handle authentication error
                 if (error.status === 401) {
                   console.log('User not logged in');
-                  // Since the user was logged in when the session check was performed,
-                  // this scenario should not occur. It's an unexpected situation.
-                  // Redirecting to login just as a fallback mechanism.
                   this.redirectToLogin();
                 } else {
                   // Handle other errors if needed
@@ -84,15 +136,12 @@ export class ArticleDetailComponent implements OnInit {
             console.error('Article not available');
           }
         } else {
-          // If the user is not logged in, redirect to the login page
           console.log('User not logged in, redirecting to login...');
           this.redirectToLogin();
         }
       },
       (error) => {
         console.error('Error checking session status:', error);
-        // Handle error while checking session status
-        // You can choose to redirect to login or handle it differently based on your application logic
         this.redirectToLogin();
       }
     );
@@ -102,7 +151,6 @@ export class ArticleDetailComponent implements OnInit {
     console.log('Redirecting to login');
     this.router.navigate(['/login']);
   }
-
 
   refreshArticle(articleId: string): void {
     this.loadArticle(articleId);
@@ -115,6 +163,7 @@ export class ArticleDetailComponent implements OnInit {
   imageError(event: any): void {
     console.error('Error loading image:', event);
   }
+
   loadArticleLikes(): void {
     this.articleService.getArticleLikes().subscribe(
       likes => {
@@ -145,15 +194,14 @@ export class ArticleDetailComponent implements OnInit {
     );
   }
 
-
   getAllArticleComments(articleId: number): void {
     this.articleService.getAllArticleComments(articleId).subscribe(
-      (comments: Comment[] | any) => { // Adjust the type to accept any
-        if (Array.isArray(comments)) { // Check if comments is an array
+      (comments: Comment[] | any) => {
+        if (Array.isArray(comments)) {
           this.articleCommentss = comments.map(comment => ({
             ...comment,
-            username: comment.username, // Ensure username is present in the Comment interface
-            text: comment.comment_text // Ensure text is present in the Comment interface
+            username: comment.username,
+            text: comment.comment_text
           }));
         } else {
           console.error('Error loading article comments:', comments);
@@ -164,9 +212,9 @@ export class ArticleDetailComponent implements OnInit {
       }
     );
   }
+
   toggleCommentContainer(): void {
     this.showCommentContainer = !this.showCommentContainer;
   }
-
 
 }

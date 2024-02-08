@@ -40,8 +40,8 @@
     </div>
   </div>
   <div class="comment-input">
-    <input type="text" placeholder="Write a comment...">
-    <button class="send-button">&#10148;</button>
+    <input type="text" placeholder="Write a comment..."  [(ngModel)]="newCommentText">
+    <button class="send-button" (click)="addComment()">&#10148;</button>
   </div>
 </div>
 

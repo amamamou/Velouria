@@ -19,6 +19,7 @@ import { DefaultImagePipe } from 'src/default-image.pipe';
 import { EditProfileComponent } from './edit-profile/edit-profile.component';
 import { CommonModule } from '@angular/common';
 import { ArticleSearchComponent } from './article-search/article-search.component';
+import { UserProfileComponent } from './user-profile/user-profile.component';
 
 @NgModule({
   declarations: [
@@ -37,6 +38,7 @@ import { ArticleSearchComponent } from './article-search/article-search.componen
     DefaultImagePipe,
     EditProfileComponent,
     ArticleSearchComponent,
+    UserProfileComponent,
 
 
   ],

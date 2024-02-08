@@ -1,0 +1,22 @@
+<!-- user-profile.component.html -->
+<div class="user-profile">
+  <div class="profile-pic-container">
+    <img [src]="'assets/images/mbappe1.jfif'" alt="Profile Picture">
+  </div>
+  <div class="username">@{{ userProfile.username }}</div>
+  <div class="name">{{ userProfile?.first_name }} {{ userProfile?.last_name }}</div>
+  <hr class="elegant-separator">
+
+
+
+  <!-- Additional details can be added here -->
+</div>
+<div class="article-container">
+
+    <div *ngFor="let article of likedArticles" class="article-card">
+      <div class="article-image" [style.background-image]="'url(' + getImageUrl(article.image) + ')'" [routerLink]="['/article', article.id]">
+      </div>
+
+      <h2 class="article-title">{{ article.title }}</h2>
+    </div>
+</div>

@@ -23,23 +23,17 @@ export class LoginComponent implements OnInit {
   errorMessage = '';
   showRegisterForm = false;
   isUserLogin = true;
-
   constructor(private userService: UserService, private router: Router) {}
 
   ngOnInit(): void {
-    // Check session status when the component initializes
-    this.userService.checkSessionStatus().subscribe(
-      loggedIn => {
-        if (loggedIn) {
-          // User is already logged in, redirect to article list
-          this.router.navigate(['/article-list']);
-        }
-      },
-      error => {
-        console.error('Error checking session status:', error);
-        this.errorMessage = 'An error occurred while checking session status.';
-      }
-    );
+    // Since JWT tokens are stateless, we check if a token exists and is valid
+    // This could involve decoding the token and checking the expiry on the client side,
+    // Or making a backend call that verifies the token's validity.
+    // For simplicity, we'll just check for the presence of a token.
+    const token = localStorage.getItem('token');
+    if (token) {
+      this.router.navigate(['/article-list']);
+    }
   }
 
   onUserLogin() {
@@ -47,6 +41,7 @@ export class LoginComponent implements OnInit {
       (response) => {
         console.log('Login response:', response);
         if (response && response.success) {
+          // Navigate to articles list upon successful login
           this.router.navigate(['/article-list']);
         } else if (response && response.error) {
           console.error('Login error:', response.error);
@@ -64,9 +59,22 @@ export class LoginComponent implements OnInit {
   }
 
   onRegister() {
+    if (this.user.password !== this.confirmPassword) {
+      this.errorMessage = 'Passwords do not match.';
+      return;
+    }
+
     this.userService.registerUser(this.user.email, this.user.password).subscribe(
-      () => {
-        // Handle registration success
+      response => {
+        // After successful registration, automatically log in the user or direct them to the login page.
+        // Assuming the backend also returns a token upon registration, similar to login.
+        if (response && response.token) {
+          localStorage.setItem('token', response.token); // Save the token
+          this.router.navigate(['/article-list']); // Redirect to articles list
+        } else {
+          // If no token is returned, direct user to manually log in.
+          this.router.navigate(['/login']);
+        }
       },
       (error) => {
         console.error('Registration error:', error);

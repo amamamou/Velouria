@@ -14,6 +14,7 @@ export class ArticleService {
   private baseUrl = 'http://localhost:3000';
 
   constructor(private http: HttpClient) { }
+  
 
   getAllArticleComments(articleId: number): Observable<Comment[]> {
     return this.http.get<Comment[]>(`${this.apiUrl}/api/articles/${articleId}/comments`);
