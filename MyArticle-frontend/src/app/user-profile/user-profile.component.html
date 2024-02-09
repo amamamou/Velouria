@@ -1,7 +1,7 @@
 <!-- user-profile.component.html -->
 <div class="user-profile">
   <div class="profile-pic-container">
-    <img [src]="'assets/images/mbappe1.jfif'" alt="Profile Picture">
+    <img src="/assets/images/{{ userProfile?.profile_pic }}" alt="Profile Picture" (error)="imageError($event)">
   </div>
   <div class="username">@{{ userProfile.username }}</div>
   <div class="name">{{ userProfile?.first_name }} {{ userProfile?.last_name }}</div>

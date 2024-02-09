@@ -1,0 +1,116 @@
+.user-cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  margin-top: 70px;
+}
+
+.user-card {
+  background-color: #f9f9f9;
+  border: 2px solid #eaeaea;
+  border-radius: 2px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 20px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 300px; /* Increase width */
+  height: 300px; /* Increase height */
+}
+
+.user-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.profile-pic {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+}
+
+
+
+h3 {
+margin-top: 10px;}
+.delete-btn {
+  background-color: #e74c3c;
+  width: 100%;
+  margin-left: 0px;
+  margin-top:40px;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.delete-btn:hover {
+  background-color: #c0392b;
+}
+
+/* dashboard.component.css */
+
+.dashboard-container {
+  display: flex;
+  min-height: 98.7vh;
+}
+
+.sidebar {
+  background-color: #f9f9f9;
+  color: rgba(101, 67, 33, 0.5);
+  padding: 50px 20px;
+  width: 300px;
+  font-family: 'Anton', sans-serif; /* Use Anton font */
+}
+
+.sidebar h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 60px; /* Increase font size */
+  margin-bottom: 60px; /* Increase margin */
+  margin-left: -10px;
+  color: #000000;
+  font-weight: bold;
+  position: fixed; /* Make the heading fixed */
+margin-top: -10px;
+
+
+}
+.sidebar ul {
+  color: rgba(101, 67, 33, 0.5);
+  list-style-type: none;
+  padding: 0;
+  position: fixed; /* Make the heading fixed */
+  margin-top: 100px;
+
+}
+
+.sidebar li {
+  color: rgba(210, 180, 140, 0.5);
+  margin-bottom: 20px; /* Increase margin */
+}
+
+.sidebar a {
+  color: rgba(101, 67, 33, 0.5);
+    text-decoration: none;
+  font-size: 22px; /* Increase font size */
+}
+
+.sidebar a:hover {
+  color: rgba(231, 84, 128, 0.5); /* A softer blue for a hover effect */
+}
+
+.sidebar .active {
+  color: #5DADE2; /* A softer blue for the active link */
+}
+.separator {
+  position: fixed; /* Make the heading fixed */
+
+  width: 1px;
+  background-color: lightgrey;
+  height: 100%; /* Adjust the height as per requirement */
+  margin-left: 340px; /* Space to the left of the line */
+}
+.sidebar-container {
+  display: flex;
+}

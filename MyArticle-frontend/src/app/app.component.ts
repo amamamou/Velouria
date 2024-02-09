@@ -17,7 +17,7 @@ export class AppComponent {
     ).subscribe(event => {
       if (event instanceof NavigationEnd) {
         // Now TypeScript knows event is of type NavigationEnd
-        this.showHeaderAndFooter = event.url !== '/login';
+        this.showHeaderAndFooter = !['/login', '/admin-dashboard', '/manage-users', '/manage-articles','/manage-categories','/analytics'].includes(event.url);
       }
     });
   }

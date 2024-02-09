@@ -14,6 +14,7 @@ body {
   left: 0; /* Aligns it to the left */
   right: 0; /* Ensures it stretches across the screen */
   z-index: 1000; /* Ensures it stays above other content */
+  margin-bottom: 100px;
 }
 
 

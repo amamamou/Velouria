@@ -1,0 +1,75 @@
+<div class="dashboard-container">
+  <!-- Sidebar -->
+  <div class="sidebar-container">
+    <div class="sidebar">
+      <h2 routerLink="/home">VELOURIA</h2>
+      <ul>
+        <li><i class="fas fa-home"></i><a routerLink="/admin-dashboard" routerLinkActive="active">&nbsp;&nbsp;Dashboard</a></li>
+        <li><i class="fas fa-newspaper"></i><a routerLink="/manage-articles" routerLinkActive="active">&nbsp;&nbsp;Manage Articles</a></li>
+        <li><i class="fas fa-users"></i><a routerLink="/manage-users" routerLinkActive="active">&nbsp;&nbsp;Manage Users</a></li>
+        <li><i class="fas fa-users"></i><a routerLink="/manage-categories" routerLinkActive="active">&nbsp;&nbsp;Manage Categories</a></li>
+        <li><i class="fas fa-chart-line"></i><a routerLink="/analytics" routerLinkActive="active">&nbsp;&nbsp;Analytics</a></li>
+        <li><i class="fas fa-envelope"></i><a routerLink="/dashboard/messages" routerLinkActive="active">&nbsp;&nbsp;Messages</a></li>
+        <li><i class="fas fa-bell"></i><a routerLink="/dashboard/notifications" routerLinkActive="active">&nbsp;&nbsp;Notifications</a></li>
+        <li><i class="fas fa-cog"></i><a routerLink="/dashboard/settings" routerLinkActive="active">&nbsp;&nbsp;Settings</a></li>
+        <li><i class="fas fa-toolbox"></i><a routerLink="/dashboard/tools" routerLinkActive="active">&nbsp;&nbsp;Tools</a></li>
+        <li><i class="fas fa-question-circle"></i><a routerLink="/dashboard/support" routerLinkActive="active">&nbsp;&nbsp;Support</a></li>
+        <li><i class="fas fa-sign-out-alt"></i><a (click)="logout()">&nbsp;&nbsp;Logout</a></li>
+      </ul>
+    </div>
+    <div class="separator"></div> <!-- Vertical separator -->
+  </div>
+
+
+  <!-- Content area -->
+  <div class="content">
+    <!-- Cards -->
+    <div class="cards-container">
+      <div class="card">
+        <div class="card-content">
+          <i class="fas fa-users" style="color: rgb(84, 124, 9);" routerLink="/manage-users"></i> <!-- Feminine symbol in pink -->
+          <div class="card-details">
+            <span class="metric" routerLink="/manage-users">Users</span>
+            <span class="value">100</span> <!-- Replace with actual number of users -->
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-content">
+          <i class="far fa-file-alt" style="color: rgb(0, 191, 255);"routerLink="/manage-articles" ></i> <!-- Symbol for articles in orange -->
+          <div class="card-details">
+            <span class="metric"routerLink="/manage-articles" >Articles</span>
+            <span class="value">50</span> <!-- Replace with actual number of articles -->
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-content">
+          <i class="far fa-heart" style="color: rgb(216, 57, 57);"></i> <!-- Heart symbol in red -->
+          <div class="card-details">
+            <span class="metric">Hearts</span>
+            <span class="value">500</span> <!-- Replace with actual number of likes -->
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-content">
+          <i class="far fa-comment" style="color: rgb(206, 61, 206);"></i> <!-- Comment symbol in purple -->
+          <div class="card-details">
+            <span class="metric">Comments</span>
+            <span class="value">200</span> <!-- Replace with actual number of comments -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Chart -->
+    <div class="chart-container">
+      <canvas id="articlePopularityChart" width="400" height="200"></canvas>
+    </div>
+  </div>
+</div>

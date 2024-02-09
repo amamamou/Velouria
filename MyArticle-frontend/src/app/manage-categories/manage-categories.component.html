@@ -1,0 +1,34 @@
+<div class="dashboard-container">
+  <!-- Sidebar -->
+  <div class="sidebar-container">
+    <div class="sidebar">
+      <h2 routerLink="/home">VELOURIA</h2>
+      <ul>
+        <li><i class="fas fa-home"></i><a routerLink="/admin-dashboard" routerLinkActive="active">&nbsp;&nbsp;Dashboard</a></li>
+        <li><i class="fas fa-newspaper"></i><a routerLink="/manage-articles" routerLinkActive="active">&nbsp;&nbsp;Manage Articles</a></li>
+        <li><i class="fas fa-users"></i><a routerLink="/manage-users" routerLinkActive="active">&nbsp;&nbsp;Manage Users</a></li>
+        <li><i class="fas fa-users"></i><a routerLink="/manage-categories" routerLinkActive="active">&nbsp;&nbsp;Manage Categories</a></li>
+        <li><i class="fas fa-chart-line"></i><a routerLink="/analytics" routerLinkActive="active">&nbsp;&nbsp;Analytics</a></li>
+        <li><i class="fas fa-envelope"></i><a routerLink="/dashboard/messages" routerLinkActive="active">&nbsp;&nbsp;Messages</a></li>
+        <li><i class="fas fa-bell"></i><a routerLink="/dashboard/notifications" routerLinkActive="active">&nbsp;&nbsp;Notifications</a></li>
+        <li><i class="fas fa-cog"></i><a routerLink="/dashboard/settings" routerLinkActive="active">&nbsp;&nbsp;Settings</a></li>
+        <li><i class="fas fa-toolbox"></i><a routerLink="/dashboard/tools" routerLinkActive="active">&nbsp;&nbsp;Tools</a></li>
+        <li><i class="fas fa-question-circle"></i><a routerLink="/dashboard/support" routerLinkActive="active">&nbsp;&nbsp;Support</a></li>
+        <li><i class="fas fa-sign-out-alt"></i><a (click)="logout()">&nbsp;&nbsp;Logout</a></li>
+      </ul>
+    </div>
+    <div class="separator"></div> <!-- Vertical separator -->
+  </div>
+  <section id="curated-articles">
+    <div class="content-wrapper">
+      <div class="article-collection">
+        <article *ngFor="let category of categories" class="article-preview" [routerLink]="['/categories', category.id]">
+          <div class="article-details" [style.background-image]="'url(' + category.image + ')'">
+            <button class="delete-btn" >Delete</button>
+
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+</div>

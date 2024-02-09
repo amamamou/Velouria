@@ -1,0 +1,144 @@
+/* dashboard.component.css */
+
+.dashboard-container {
+  display: flex;
+  min-height: 98.7vh;
+}
+
+.sidebar {
+  background-color: #f9f9f9;
+  color: rgba(101, 67, 33, 0.5);
+  padding: 50px 20px;
+  width: 300px;
+  font-family: 'Anton', sans-serif; /* Use Anton font */
+}
+
+.sidebar h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 60px; /* Increase font size */
+  margin-bottom: 60px; /* Increase margin */
+  margin-left: -10px;
+  color: #000000;
+  font-weight: bold;
+  position: fixed; /* Make the heading fixed */
+margin-top: -10px;
+
+
+}
+.sidebar ul {
+  color: rgba(101, 67, 33, 0.5);
+  list-style-type: none;
+  padding: 0;
+  position: fixed; /* Make the heading fixed */
+  margin-top: 100px;
+
+}
+
+.sidebar li {
+  color: rgba(210, 180, 140, 0.5);
+  margin-bottom: 20px; /* Increase margin */
+}
+
+.sidebar a {
+  color: rgba(101, 67, 33, 0.5);
+    text-decoration: none;
+  font-size: 22px; /* Increase font size */
+}
+
+.sidebar a:hover {
+  color: rgba(231, 84, 128, 0.5); /* A softer blue for a hover effect */
+}
+
+.sidebar .active {
+  color: #5DADE2; /* A softer blue for the active link */
+}
+.separator {
+  position: fixed; /* Make the heading fixed */
+
+  width: 1px;
+  background-color: lightgrey;
+  height: 100%; /* Adjust the height as per requirement */
+  margin-left: 340px; /* Space to the left of the line */
+}
+.sidebar-container {
+  display: flex;
+}
+.content {
+  flex: 1;
+}
+
+.cards-container {
+  display: flex;
+  justify-content: space-around; /* Ensure cards are evenly spaced */
+  align-items: start; /* Align items at the start of the container */
+  width: calc(100% - 300px); /* Calculate width excluding sidebar */
+  padding: 20px; /* Reduced padding around cards container */
+  box-sizing: border-box; /* Include padding in the width calculation */
+  gap: 30px; /* This creates space between the cards */
+  margin-left: 80px;
+
+}
+
+.card {
+  border: 2px solid #eaeaea; /* Subtle border for the card */
+  background-color: #f9f9f9;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Center content vertically */
+  align-items: center; /* Center content horizontally */
+  color: #100101;
+  font-family: 'Anton', sans-serif;
+  border-radius: 0px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 15px; /* Significantly reduced padding */
+  width: 22%; /* Adjust width for a more compact look */
+  height: 100px; /* Set a fixed, smaller height */
+  margin: 0 5px; /* Ensure some spacing between cards */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+
+
+}
+
+.card i {
+  font-size: 20px; /* Adjust icon size */
+  margin-bottom: 10px; /* Adjust space between icon and text */
+}
+
+
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.value {
+  font-size: 20px; /* Adjust value font size */
+  font-weight: bold; /* Make value bold */
+}
+
+.metric {
+  font-size: 16px; /* Adjust metric description font size */
+}
+.content {
+  margin-left: 100px; /* Adjust this value to match the width of the sidebar */
+  padding: 20px;
+  margin-top: 80px;
+}
+
+
+.chart-container {
+  margin-top: 20px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+
+  margin-right: 120px;
+}
+
+canvas {
+  height: auto;
+  max-width: 100%;
+}

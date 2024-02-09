@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from '../user.service';
 import { User } from 'src/user.model';
+import { Admin } from '../admin.model';
+import { AdminService } from '../admin.service';
 
 @Component({
   selector: 'app-login',
@@ -18,12 +20,20 @@ export class LoginComponent implements OnInit {
     lastName: '',
     profilePic: ''
   };
-
+  admin: Admin = { // Initialize admin object
+    adminId: 0,
+    username: '',
+    email: '',
+    password: '',
+    firstName: '',
+    lastName: '',
+    profilePic: ''
+  };
   confirmPassword = '';
   errorMessage = '';
   showRegisterForm = false;
   isUserLogin = true;
-  constructor(private userService: UserService, private router: Router) {}
+  constructor(private adminService : AdminService, private userService: UserService, private router: Router) {}
 
   ngOnInit(): void {
     // Since JWT tokens are stateless, we check if a token exists and is valid
@@ -34,6 +44,27 @@ export class LoginComponent implements OnInit {
     if (token) {
       this.router.navigate(['/article-list']);
     }
+  }
+
+  onAdminLogin(): void {
+    this.adminService.loginAdmin(this.admin).subscribe(
+      (response) => {
+        console.log('Admin Login response:', response);
+        if (response && response.success) {
+          this.router.navigate(['/admin-dashboard']);
+        } else if (response && response.error) {
+          console.error('Admin Login error:', response.error);
+          this.errorMessage = response.error;
+        } else {
+          console.error('Invalid response from the server');
+          this.errorMessage = 'Invalid response from the server';
+        }
+      },
+      (error) => {
+        console.error('Admin Login error:', error);
+        this.errorMessage = error.message || 'An error occurred during admin login.';
+      }
+    );
   }
 
   onUserLogin() {

@@ -10,6 +10,11 @@ import { RegisterComponent } from './register/register.component';
 import { ArticleCategoryComponent } from './article-category/article-category.component';
 import { ArticleSearchComponent } from './article-search/article-search.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { ManageUsersComponent } from './manage-users/manage-users.component';
+import { ManageArticlesComponent } from './manage-articles/manage-articles.component';
+import { ManageCategoriesComponent } from './manage-categories/manage-categories.component';
+import { AnalyticsComponent } from './analytics/analytics.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -30,7 +35,13 @@ const routes: Routes = [
   { path: 'logout', redirectTo: '/login' }, // Assuming logout is handled elsewhere
   { path: 'like/:articleId', component: ArticleDetailComponent },
   { path: 'search-results', component: ArticleSearchComponent },
-  { path: 'profile', component: UserProfileComponent }
+  { path: 'profile', component: UserProfileComponent },
+  {path: 'admin-dashboard', component: DashboardComponent},
+  { path: 'manage-users', component: ManageUsersComponent },
+  { path: 'manage-articles', component: ManageArticlesComponent},
+  { path: 'manage-categories', component: ManageCategoriesComponent},
+  { path: 'analytics', component: AnalyticsComponent},
+
 
 
 

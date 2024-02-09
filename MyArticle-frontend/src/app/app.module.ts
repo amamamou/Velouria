@@ -20,6 +20,13 @@ import { EditProfileComponent } from './edit-profile/edit-profile.component';
 import { CommonModule } from '@angular/common';
 import { ArticleSearchComponent } from './article-search/article-search.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { ManageUsersComponent } from './manage-users/manage-users.component';
+import { ManageArticlesComponent } from './manage-articles/manage-articles.component';
+import { ManageCategoriesComponent } from './manage-categories/manage-categories.component';
+import { AnalyticsComponent } from './analytics/analytics.component';
+
+
 
 @NgModule({
   declarations: [
@@ -39,6 +46,12 @@ import { UserProfileComponent } from './user-profile/user-profile.component';
     EditProfileComponent,
     ArticleSearchComponent,
     UserProfileComponent,
+    DashboardComponent,
+    ManageUsersComponent,
+    ManageArticlesComponent,
+    ManageCategoriesComponent,
+    AnalyticsComponent,
+
 
 
   ],
@@ -49,6 +62,7 @@ import { UserProfileComponent } from './user-profile/user-profile.component';
     FormsModule,
     ReactiveFormsModule,
     CommonModule,
+
 
 
 

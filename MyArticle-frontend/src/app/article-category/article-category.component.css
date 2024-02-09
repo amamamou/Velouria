@@ -190,3 +190,12 @@ h1 {
   cursor: pointer;
   margin-left: 690px;
 }
+.category-background {
+  width: 80%;
+  height: 300px; /* Adjust the height as needed */
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed; /* Make the background fixed */
+
+}

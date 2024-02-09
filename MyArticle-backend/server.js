@@ -299,6 +299,31 @@ app.get('/api/articles/:articleId/comments', async (req, res) => {
   }
 });
 
+app.get('/api/article-popularity', (req, res) => {
+  const query = `
+    SELECT article_id,
+           SUM(comment_count) AS total_comments,
+           SUM(like_count) AS total_likes
+    FROM (
+      SELECT article_id, COUNT(*) AS comment_count, 0 AS like_count
+      FROM comments
+      GROUP BY article_id
+      UNION ALL
+      SELECT article_id, 0 AS comment_count, COUNT(*) AS like_count
+      FROM likes
+      GROUP BY article_id
+    ) AS popularity
+    GROUP BY article_id;
+  `;
+  connection.query(query, (error, results) => {
+    if (error) {
+      console.error('Error counting article popularity:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    } else {
+      res.status(200).json(results);
+    }
+  });
+});
 
 
 // registration
@@ -401,7 +426,36 @@ app.post('/login', async (req, res) => {
 app.post('/logout', isAuthenticated, (req, res) => {
   res.status(200).json({ message: 'Logged out successfully' });
 });
-
+//users lkol
+app.get('/users', async (req, res) => {
+  try {
+    const users = await connection.query('SELECT * FROM users');
+    res.json(users);
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({ error: 'Failed to fetch users' });
+  }
+});
+//articles lkol
+app.get('/articles', async (req, res) => {
+  try {
+    const articles = await connection.query('SELECT * FROM articles');
+    res.json(articles);
+  } catch (error) {
+    console.error('Error fetching articles:', error);
+    res.status(500).json({ error: 'Failed to fetch articles' });
+  }
+});
+//categories lkol
+app.get('/categories', async (req, res) => {
+  try {
+    const categories = await connection.query('SELECT * FROM categories');
+    res.json(categories);
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+    res.status(500).json({ error: 'Failed to fetch categories' });
+  }
+});
 
 // Comment article endpoint
 app.post('/add-comment/:articleId', isAuthenticated, async (req, res) => {
@@ -540,6 +594,89 @@ app.get('/liked-articles', isAuthenticated, async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+
+
+
+
+
+
+
+
+
+//admin
+app.post('/login-admin', async (req, res) => {
+  const { email, password } = req.body;
+
+  // Check if email and password are provided
+  if (!email || !password) {
+    return res.status(400).json({ error: 'Email and password are required' });
+  }
+
+  try {
+    // Query the database to find the admin by email
+    const admins = await connection.query('SELECT * FROM admins WHERE email = ? LIMIT 1', [email]);
+
+    // If no admin found with the provided email, return 401 Unauthorized
+    if (admins.length === 0) {
+      return res.status(401).json({ error: 'Invalid email or password', authenticated: false });
+    }
+
+    const admin = admins[0];
+
+    // Compare the provided password with the stored password
+    if (password === admin.password) {
+      // If password matches, create a JWT token
+      const { id, username, email } = admin;
+      const adminForToken = {
+        adminId: id,
+        username,
+        email,
+      };
+      const token = jwt.sign(adminForToken, secretKey, { expiresIn: '24h' });
+
+      // Return success response with token and admin data
+      return res.status(200).json({
+        message: 'Logged in successfully',
+        authenticated: true,
+        token,
+        admin: adminForToken,
+      });
+    } else {
+      // If password does not match, return 401 Unauthorized
+      return res.status(401).json({ error: 'Invalid email or password', authenticated: false });
+    }
+  } catch (error) {
+    // Handle database errors
+    console.error('Database error during admin login:', error);
+    return res.status(500).json({ error: 'Internal Server Error during admin login', authenticated: false });
+  }
+});
+
+
+// Middleware to authenticate admin
+const isAdminAuthenticated = (req, res, next) => {
+  const token = req.headers.authorization?.split(" ")[1]; 
+
+  if (!token) {
+    return res.status(401).json({ error: 'Unauthorized', authenticated: false });
+  }
+
+  jwt.verify(token, secretKey, (err, decoded) => {
+    if (err) {
+      return res.status(401).json({ error: 'Unauthorized', authenticated: false });
+    }
+
+    req.admin = decoded; 
+    next();
+  });
+};
+
+// Example usage:
+app.get('/admin-profile', isAdminAuthenticated, (req, res) => {
+  res.json({ loggedIn: true, admin: req.admin });
+});
+
 
 
 const port = 3000;

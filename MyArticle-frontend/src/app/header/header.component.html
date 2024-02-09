@@ -1,23 +1,16 @@
-<!DOCTYPE html>
-<html>
-<head>
-
-</head>
-<body>
-
 <nav class="navbar">
     <div class="brand-title" [routerLink]="['/home']">VELOURIA</div>
     <div class="separator"></div>
     <div class="navbar-links">
         <ul>
             <li><a href="/profile">View Profile</a></li>
-            <li><a href="/login">Sign In</a></li>
-            <li><a href="/login" (click)="logout()">Logout</a></li>
             <li><input type="text" placeholder="Search articles..." [(ngModel)]="searchTerm" (keyup.enter)="search()" /></li>
+            <li><a href="/login" (click)="logout()">Logout</a></li>
+
         </ul>
     </div>
 </nav>
-<br><br> <br> <br>
+<br><br><br><br><br><br><br><br>
 <script>
   window.addEventListener("scroll", function() {
       const navbarLinks = document.querySelector('.navbar-links');
@@ -28,10 +21,3 @@
       }
   });
 </script>
-
-
-
-
-
-</body>
-</html>

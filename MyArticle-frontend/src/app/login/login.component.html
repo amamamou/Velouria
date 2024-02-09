@@ -31,7 +31,7 @@
     </form>
 
 
-    <!-- Admin Login Form
+    <!-- Admin Login Form -->
       <form *ngIf="!isUserLogin && !showRegisterForm" (ngSubmit)="onAdminLogin()">
       <div class="form-group">
         <label for="adminEmail">Email:</label>
@@ -45,7 +45,7 @@
 
     </form>
 
-  -->
+
     <div class="register-section">
     <!-- Registration Form -->
     <form *ngIf="showRegisterForm" (ngSubmit)="onRegister()">

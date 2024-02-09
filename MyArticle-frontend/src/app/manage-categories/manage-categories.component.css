@@ -59,25 +59,9 @@
 /* Article Collection Styles */
 .article-collection {
   display: flex; /* Arrange articles in a row */
-  overflow-x: auto; /* Enable horizontal scrolling */
-  scrollbar-width: thin; /* Make scrollbar thinner */
-  scrollbar-color: #888 #f4f4f4; /* Scrollbar styling */
-  margin-top: -35px;
 }
 
-/* Custom scrollbar for Chrome, Safari, and Opera */
-.article-collection::-webkit-scrollbar {
-  height: 8px;
-}
 
-.article-collection::-webkit-scrollbar-track {
-  background: #f4f4f4;
-}
-
-.article-collection::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 10px;
-}
 
 .article-preview {
   flex: 0 0 auto; /* Do not grow, do not shrink, base width on content */
@@ -165,4 +149,106 @@
   font-family: 'Roboto Slab', serif; /* Roboto Slab font */
   cursor: pointer;
   margin-left: 690px;
+}
+/* dashboard.component.css */
+
+.dashboard-container {
+  display: flex;
+  min-height: 98.7vh;
+}
+
+.sidebar {
+  background-color: #f9f9f9;
+  color: rgba(101, 67, 33, 0.5);
+  padding: 50px 20px;
+  width: 300px;
+  font-family: 'Anton', sans-serif; /* Use Anton font */
+}
+
+.sidebar h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 60px; /* Increase font size */
+  margin-bottom: 60px; /* Increase margin */
+  margin-left: -10px;
+  color: #000000;
+  font-weight: bold;
+  position: fixed; /* Make the heading fixed */
+margin-top: -10px;
+
+
+}
+.sidebar ul {
+  color: rgba(101, 67, 33, 0.5);
+  list-style-type: none;
+  padding: 0;
+  position: fixed; /* Make the heading fixed */
+  margin-top: 100px;
+
+}
+
+.sidebar li {
+  color: rgba(210, 180, 140, 0.5);
+  margin-bottom: 20px; /* Increase margin */
+}
+
+.sidebar a {
+  color: rgba(101, 67, 33, 0.5);
+    text-decoration: none;
+  font-size: 22px; /* Increase font size */
+}
+
+.sidebar a:hover {
+  color: rgba(231, 84, 128, 0.5); /* A softer blue for a hover effect */
+}
+
+.sidebar .active {
+  color: #5DADE2; /* A softer blue for the active link */
+}
+.separator {
+  position: fixed; /* Make the heading fixed */
+
+  width: 1px;
+  background-color: lightgrey;
+  height: 100%; /* Adjust the height as per requirement */
+  margin-left: 340px; /* Space to the left of the line */
+}
+.sidebar-container {
+  display: flex;
+}
+.article-collection {
+  display: flex; /* Display categories horizontally */
+  flex-wrap: wrap; /* Allow wrapping to multiple lines */
+  justify-content: center; /* Center-align categories */
+  margin-top: 120px;
+}
+
+.article-preview {
+  color: white;
+  margin-right: 20px;
+  width: 300px; /* Fixed width for each category */
+  height: 250px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* Optional: Adjust the article details for better appearance */
+.article-details {
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+}
+.delete-btn {
+  background-color: #e74c3c;
+  margin-left: 0px;
+  margin-bottom: 5px;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.delete-btn:hover {
+  background-color: #c0392b;
 }

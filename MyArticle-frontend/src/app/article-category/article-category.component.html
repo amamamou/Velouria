@@ -1,6 +1,8 @@
 <div class="article-category">
  <h1 *ngIf="category" class="category-title">{{ category.name }}</h1>
-
+ <section *ngIf="category" class="category-background" [style.backgroundImage]="'url(' + category.image + ')'">
+  <!-- Content within the section -->
+</section>
   <div *ngIf="articles.length > 0; else noArticlesTemplate">
       <div class="article-container">
         <div *ngFor="let article of articles" class="article-card">
