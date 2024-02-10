@@ -6,5 +6,7 @@ export interface Article {
   image: string ;
   category_id: number;
   isLiked?: boolean; // Keep the type as boolean
+  comments?: any[]; // Add comments property
+  likes?: any[];    // Add likes property
 
 }

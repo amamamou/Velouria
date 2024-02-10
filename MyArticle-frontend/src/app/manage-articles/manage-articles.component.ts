@@ -13,9 +13,48 @@ export class ManageArticlesComponent implements OnInit {
 
   constructor(private router: Router,private articleService: ArticleService, private adminService: AdminService) { }
 
+
   ngOnInit(): void {
     this.fetchArticles(); // Fetch articles when component initializes
   }
+  deleteArticle(articleId: string): void {
+    // Check if the admin is authenticated
+    this.adminService.checkSessionStatus().subscribe(
+      (loggedIn) => {
+        if (loggedIn) {
+          // If authenticated, prompt for confirmation before deleting
+          if (confirm('Are you sure you want to delete this article?')) {
+            // If confirmed, call the service to delete the article
+            this.adminService.deleteArticle(articleId).subscribe(
+              () => {
+                // Remove the deleted article from the local array
+                this.articles = this.articles.filter(article => article.id !== articleId);
+                console.log('Article deleted successfully');
+
+                // Refresh the page by navigating back to the same component's route
+                this.router.navigateByUrl('/manage-articles', { skipLocationChange: true }).then(() => {
+                  this.router.navigate(['/manage-articles']);
+                });
+              },
+              (error) => {
+                console.error('Error deleting article:', error);
+              }
+            );
+          }
+        } else {
+          console.log('Admin not logged in, redirecting to login...');
+          // Redirect to login page
+          this.router.navigate(['/login']);
+        }
+      },
+      (error) => {
+        console.error('Error checking admin session status:', error);
+        // Redirect to login page
+        this.router.navigate(['/login']);
+      }
+    );
+  }
+
 
   fetchArticles(): void {
     this.articleService.getAllArticles().subscribe(

@@ -73,11 +73,13 @@
 }
 /* article-detail.component.css */
 .heart-icon {
-  font-size: 40px; /* Adjust the size as needed */
+  font-size: 30px; /* Adjust the size as needed */
   cursor: pointer;
   transition: color 0.3s ease-in-out;
 }
-
+.comment-icon {  font-size: 18px; /* Adjust as needed */
+  margin-bottom: -6px;
+}
 
 .liked {
   color: red;
@@ -87,12 +89,10 @@
 .article-interaction-section {
   display: flex;
   align-items: center;
-  margin-top: 10px; /* Adjust as needed */
 }
 
 .heart-icon,
 .comment-icon {
-  font-size: 18px; /* Adjust as needed */
   cursor: pointer;
   margin-right: 10px; /* Adjust as needed */
 }

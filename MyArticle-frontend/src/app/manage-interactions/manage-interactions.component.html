@@ -1,9 +1,9 @@
 <div class="dashboard-container">
+  <!-- Sidebar -->
   <div class="sidebar-container">
     <div class="sidebar">
       <h2 routerLink="/home">VELOURIA</h2>
       <ul>
-
         <li><i class="fas fa-home"></i><a routerLink="/admin-dashboard" routerLinkActive="active">&nbsp;&nbsp;Dashboard</a></li>
         <li><i class="fas fa-newspaper"></i><a routerLink="/manage-articles" routerLinkActive="active">&nbsp;&nbsp;Manage Articles</a></li>
         <li><i class="fas fa-users"></i><a routerLink="/manage-users" routerLinkActive="active">&nbsp;&nbsp;Manage Users</a></li>
@@ -19,22 +19,51 @@
     </div>
     <div class="separator"></div> <!-- Vertical separator -->
   </div>
+  <div class="container">
+    <h2 style="font-family: 'Anton', sans-serif;">ARTICLE ID: {{ articleId }}</h2>
 
-<!-- article-list.component.html -->
-<div class="article-container">
-
-  <div *ngFor="let article of articles" class="article-card">
-    <!-- Top Section with Background Image -->
-    <div class="article-image" [style.background-image]="'url(' + getImageUrl(article.image) + ')'" [routerLink]="['/manage-interactions', article.id]">
-      <!-- Image related content (if any) goes here -->
+    <div class="likes">
+      <h3 style="font-family: 'Anton', sans-serif;">Likes</h3>
+      <table style="background-color: #f9f9f9;">
+        <thead>
+          <tr>
+            <th>User ID</th>
+            <th>Username</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let like of likes">
+            <td>{{ like.user_id }}</td>
+            <td>{{ like.username }}</td>
+            <td>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
-    <!-- Bottom Section with Title -->
-    <h2 class="article-title">{{ article.title }}</h2>
-    <button class="delete-btn" (click)="deleteArticle(article.id)">Delete</button>
+    <div class="comments">
+      <h3 style="font-family: 'Anton', sans-serif;">Comments</h3>
+      <table style="background-color: #f9f9f9;">
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Comment</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let comment of comments">
+            <td>{{ comment.username }}</td>
+            <td>{{ comment.comment_text }}</td>
+            <td>
+              <span class="delete-icon" (click)="deleteComment(comment.id)">X</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
   </div>
-</div>
 
-
-</div>

@@ -24,8 +24,12 @@
   </div>
   <div class="article-interaction-section">
     <span [class]="article.isLiked ? 'heart-icon liked' : 'heart-icon'" (click)="likeOrRedirect()" title="Like this article">♡</span>
-    <span class="comment-icon" title="Comment on this article" (click)="toggleCommentContainer()">comment</span>
-  </div>
+    <span class="comment-icon" title="Comment on this article" (click)="toggleCommentContainer()">
+      <i class="far fa-comment"></i> <!-- Use "far" for empty version -->
+    </span>
+
+
+      </div>
 
   <hr class="article-separator"> <!-- Add this line for the separator -->
   <span class="likes-info">Likes: {{ article && article.id !== undefined ? (articleLikes[+article.id] || 0) : 0 }}</span> &nbsp;

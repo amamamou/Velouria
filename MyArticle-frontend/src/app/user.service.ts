@@ -103,9 +103,20 @@ checkIfUserLikedArticle(articleId: string): Observable<boolean> {
   private setLoggedIn(value: boolean): void {
     this.loggedInSubject.next(value);
   }
+  registerUser(email: string, password: string, firstName: string, lastName: string, username: string): Observable<any> {
+    // Include username in the body if it's required
+    const body = { username, email, password, firstName, lastName };
+    const headers = new HttpHeaders().set('Content-Type', 'application/json');
 
-  registerUser(email: string, password: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/register`, { email, password });
+    return this.http.post<any>(`${this.apiUrl}/register`, body, { headers }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+
+  private handleError(error: HttpErrorResponse): Observable<never> {
+    console.error('An error occurred:', error);
+    return throwError('Something went wrong; please try again later.');
   }
 
   loginUser(credentials: any): Observable<any> {

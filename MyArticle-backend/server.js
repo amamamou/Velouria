@@ -276,6 +276,27 @@ app.get('/api/article-likes', (req, res) => {
   });
 });
 
+app.get('/api/articles/:articleId/likes', async (req, res) => {
+  const articleId = req.params.articleId;
+  if (!articleId) {
+    return res.status(400).json({ error: 'Article ID is required' });
+  }
+  
+  try {
+    const query = `
+      SELECT l.*, u.username 
+      FROM likes l 
+      INNER JOIN users u ON l.user_id = u.user_id
+      WHERE l.article_id = ? 
+      ORDER BY l.created_at DESC
+    `;
+    const likes = await connection.query(query, [articleId]);
+    res.json(likes);
+  } catch (error) {
+    console.error('Failed to fetch likes:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 app.get('/api/articles/:articleId/comments', async (req, res) => {
   const articleId = req.params.articleId;
@@ -325,23 +346,66 @@ app.get('/api/article-popularity', (req, res) => {
   });
 });
 
-
-// registration
+//register
+//register
 app.post('/register', async (req, res) => {
-  const { username, email, password } = req.body;
-  if (!username || !email || !password) {
-    return res.status(400).send('Username, email, and password are required');
+  const { username, email, password, firstName, lastName } = req.body;
+
+  if (!username || !email || !password || !firstName || !lastName) {
+    return res.status(400).json({ error: 'Username, email, password, first name, and last name are required' });
   }
 
   try {
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
-    await connection.query('INSERT INTO users (username, email, password) VALUES (?, ?, ?)', [username, email, hashedPassword]);
-    res.status(201).send('User created');
+    // Check if the email is already registered
+    const existingUser = await connection.query('SELECT * FROM users WHERE email = ? LIMIT 1', [email]);
+
+    if (existingUser.length > 0) {
+      return res.status(409).json({ error: 'Email is already registered' });
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10); // Hash password without specifying salt rounds
+
+    // Insert the new user into the database
+    const result = await connection.query(
+      'INSERT INTO users (username, email, password_hash, first_name, last_name) VALUES (?, ?, ?, ?, ?)',
+      [username, email, hashedPassword, firstName, lastName]
+    );
+
+    // Retrieve the inserted user's ID
+    const userId = result.insertId;
+	  const notification = {
+      title: 'New User Registered',
+      message: `A new user with username ${username} and email ${email} has registered.`,
+      type: 'user_registration'
+    };
+    await createNotificationForAdmin(notification);
+
+    // Optionally, you can generate a token for the newly registered user and log them in immediately
+    // For simplicity, this example doesn't include automatic login after registration
+
+    res.status(201).json({ message: 'User registered successfully', userId });
   } catch (error) {
-    console.error('Database error:', error);
-    res.status(500).send(error.message);
+    console.error('Error registering user:', error);
+    return res.status(500).json({ error: 'Internal Server Error during registration' });
   }
 });
+
+
+app.get('/notifications', async (req, res) => {
+  try {
+    // Query to select all notifications from the database
+    const query = 'SELECT * FROM notifications ORDER BY created_at DESC';
+    const notifications = await connection.query(query);
+
+    // Send the fetched notifications as a response
+    res.status(200).json(notifications);
+  } catch (error) {
+    console.error('Error fetching notifications:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 
 /*
 app.get('/users/profile', isLoggedIn, async (req, res) => {
@@ -469,6 +533,13 @@ app.post('/add-comment/:articleId', isAuthenticated, async (req, res) => {
     if (!commentRecorded) {
       return res.status(500).json({ error: 'Failed to record comment' });
     }
+	 // Create a notification for the admin
+    const notification = {
+      title: 'New Comment Added',
+      message: `A new comment has been added to article with ID ${articleId}.`,
+      type: 'comment'
+    };
+    await createNotificationForAdmin(notification);
 
     res.status(201).json({ success: true, message: 'Comment added successfully' });
   } catch (error) {
@@ -515,7 +586,13 @@ app.post('/like-article/:articleId', isAuthenticated, async (req, res) => {
       return res.status(500).json({ error: 'Failed to record like' });
     }
 
-
+  // Create a notification for the admin
+    const notification = {
+      title: 'New Like Notification',
+      message: `User ${userId} has liked article ${articleId}.`,
+      type: 'like'
+    };
+    await createNotificationForAdmin(notification);
 
     res.status(200).json({ message: 'Article liked successfully' });
   } catch (error) {
@@ -523,6 +600,21 @@ app.post('/like-article/:articleId', isAuthenticated, async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+async function createNotificationForAdmin(notification) {
+  try {
+    // Assuming you have a connection to your database established
+    // Execute the query to insert the notification
+    await connection.query('INSERT INTO notifications (title, message, type) VALUES (?, ?, ?)', [
+      notification.title,
+      notification.message,
+      notification.type
+    ]);
+    console.log('Notification created successfully.');
+  } catch (error) {
+    console.error('Error creating notification:', error);
+    throw error; // You can choose to handle the error differently if needed
+  }
+}
 
 async function checkUserLike(userId, articleId) {
   const result = await connection.query('SELECT * FROM likes WHERE user_id = ? AND article_id = ?', [userId, articleId]);
@@ -677,6 +769,112 @@ app.get('/admin-profile', isAdminAuthenticated, (req, res) => {
   res.json({ loggedIn: true, admin: req.admin });
 });
 
+
+//delete articles
+// Define a route for deleting articles
+app.delete('/articles/:id', isAdminAuthenticated, async (req, res) => {
+  const articleId = req.params.id;
+
+  try {
+    // Check if the article exists
+    const existingArticle = await connection.query('SELECT * FROM articles WHERE id = ?', [articleId]);
+    if (existingArticle.length === 0) {
+      return res.status(404).json({ error: 'Article not found' });
+    }
+
+    // Delete the article from the database
+    await connection.query('DELETE FROM articles WHERE id = ?', [articleId]);
+    
+    // Return success response
+    return res.status(200).json({ message: 'Article deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting article:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+// Define a route for deleting users by the admin
+app.delete('/users/:id', isAdminAuthenticated, async (req, res) => {
+  const userId = req.params.id;
+  
+  try {
+    // Check if the user exists
+    const existingUser = await connection.query('SELECT * FROM users WHERE user_id = ?', [userId]);
+    if (existingUser.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Delete the user from the database
+    await connection.query('DELETE FROM users WHERE user_id = ?', [userId]);
+
+    // Return success response
+    return res.status(200).json({ message: 'User deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+// Define a route for deleting categories by the admin
+app.delete('/categories/:id', isAdminAuthenticated, async (req, res) => {
+  const categoryId = req.params.id;
+  
+  try {
+    // Check if the category exists
+    const existingCategory = await connection.query('SELECT * FROM categories WHERE id = ?', [categoryId]);
+    if (existingCategory.length === 0) {
+      return res.status(404).json({ error: 'Category not found' });
+    }
+
+    // Delete the category from the database
+    await connection.query('DELETE FROM categories WHERE id = ?', [categoryId]);
+
+    // Return success response
+    return res.status(200).json({ message: 'Category deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting category:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+app.delete('/comments/:commentId', isAdminAuthenticated, async (req, res) => {
+  const commentId = req.params.commentId;
+  
+  try {
+    // Check if the comment exists
+    const existingComment = await connection.query('SELECT * FROM comments WHERE comment_id = ?', [commentId]);
+    if (existingComment.length === 0) {
+      return res.status(404).json({ error: 'Comment not found' });
+    }
+
+    // Delete the comment from the database
+    await connection.query('DELETE FROM comments WHERE comment_id = ?', [commentId]);
+
+    // Return success response
+    return res.status(200).json({ message: 'Comment deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting comment:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+app.delete('/notifications/:notificationId', isAdminAuthenticated, async (req, res) => {
+  const notificationId = req.params.notificationId;
+
+  try {
+    // Check if the notification exists
+    const existingNotification = await connection.query('SELECT * FROM notifications WHERE id = ?', [notificationId]);
+    if (existingNotification.length === 0) {
+      return res.status(404).json({ error: 'Notification not found' });
+    }
+
+    // Delete the notification from the database
+    await connection.query('DELETE FROM notifications WHERE id = ?', [notificationId]);
+
+    // Return success response
+    return res.status(200).json({ message: 'Notification deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting notification:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 
 const port = 3000;

@@ -12,7 +12,6 @@ import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
-import { RegisterComponent } from './register/register.component';
 import { ModalComponent } from './modal/modal.component';
 import { ArticleCategoryComponent } from './article-category/article-category.component';
 import { DefaultImagePipe } from 'src/default-image.pipe';
@@ -25,6 +24,8 @@ import { ManageUsersComponent } from './manage-users/manage-users.component';
 import { ManageArticlesComponent } from './manage-articles/manage-articles.component';
 import { ManageCategoriesComponent } from './manage-categories/manage-categories.component';
 import { AnalyticsComponent } from './analytics/analytics.component';
+import { ManageInteractionsComponent } from './manage-interactions/manage-interactions.component';
+import { ManageNotificationsComponent } from './manage-notifications/manage-notifications.component';
 
 
 
@@ -39,7 +40,6 @@ import { AnalyticsComponent } from './analytics/analytics.component';
     FooterComponent,
     HomeComponent,
     LoginComponent,
-    RegisterComponent,
     ModalComponent,
     ArticleCategoryComponent,
     DefaultImagePipe,
@@ -51,6 +51,8 @@ import { AnalyticsComponent } from './analytics/analytics.component';
     ManageArticlesComponent,
     ManageCategoriesComponent,
     AnalyticsComponent,
+    ManageInteractionsComponent,
+    ManageNotificationsComponent,
 
 
 

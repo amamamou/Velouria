@@ -1,0 +1,194 @@
+.dashboard-container {
+  display: flex;
+  min-height: 98.7vh;
+}
+
+.sidebar {
+  background-color: #f9f9f9;
+  color: rgba(101, 67, 33, 0.5);
+  padding: 50px 20px;
+  width: 300px;
+  font-family: 'Anton', sans-serif; /* Use Anton font */
+}
+
+.sidebar h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 60px; /* Increase font size */
+  margin-bottom: 60px; /* Increase margin */
+  margin-left: -10px;
+  color: #000000;
+  font-weight: bold;
+  position: fixed; /* Make the heading fixed */
+  margin-top: -10px;
+}
+
+.container {
+  margin-top: 10px;
+  margin-left: 40px;
+}
+
+.likes,
+.comments {
+  margin-bottom: 30px;
+}
+
+.likes h3,
+.comments h3 {
+  margin-bottom: 10px;
+  font-size: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd; /* Light gray border between rows */
+}
+
+tr:last-child td {
+  border-bottom: none; /* No border on the last row */
+}
+
+.delete-btn {
+  cursor: pointer;
+  padding: 4px 8px;
+  font-weight: bold;
+  color: #FF6347; /* Tomato color for the button text, feel free to change */
+  background-color: transparent;
+  border: none;
+  border-radius: 4px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.delete-btn:hover {
+  background-color: #FF6347; /* Tomato background on hover */
+  color: white; /* White text on hover */
+}
+
+.sidebar ul {
+  color: rgba(101, 67, 33, 0.5);
+  list-style-type: none;
+  padding: 0;
+  position: fixed; /* Make the heading fixed */
+  margin-top: 90px;
+}
+
+.sidebar li {
+  color: rgba(210, 180, 140, 0.5);
+  margin-bottom: 20px; /* Increase margin */
+}
+
+.sidebar a {
+  color: rgba(101, 67, 33, 0.5);
+  text-decoration: none;
+  font-size: 22px; /* Increase font size */
+}
+
+.sidebar a:hover {
+  color: rgba(231, 84, 128, 0.5); /* A softer blue for a hover effect */
+}
+
+.sidebar .active {
+  color: #5DADE2; /* A softer blue for the active link */
+}
+
+.separator {
+  position: fixed; /* Make the heading fixed */
+  width: 1px;
+  background-color: lightgrey;
+  height: 100%; /* Adjust the height as per requirement */
+  margin-left: 340px; /* Space to the left of the line */
+}
+
+.sidebar-container {
+  display: flex;
+}
+
+.delete-btn {
+  background-color: #e74c3c;
+  width: 100%;
+  color: white;
+  border: none;
+  padding: 12px 20px; /* Increase padding */
+  border-radius: 0px; /* Add border-radius */
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.delete-btn:hover {
+  background-color: #c0392b;
+}
+/* style.css */
+
+.delete-icon {
+  cursor: pointer;
+  padding: 4px 8px;
+  display: inline-block;
+  font-weight: bold;
+  color: #FF6347; /* Tomato color for the icon, feel free to change */
+  border-radius: 50%; /* Circular background on hover */
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.delete-icon:hover {
+  background-color: #FF6347; /* Tomato background on hover */
+  color: white; /* White X on hover */
+}
+/* style.css */
+
+.likes,
+.comments {
+  margin-bottom: 20px;
+}
+
+.likes table,
+.comments table {
+  width: 1100px;
+  border-collapse: collapse;
+}
+
+.likes th,
+.comments th,
+.likes td,
+.comments td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.likes th,
+.comments th {
+  background-color: #f9f9f9;
+  color: #333;
+  font-family: 'Anton', sans-serif;
+}
+
+.likes .delete-icon,
+.comments .delete-icon {
+  cursor: pointer;
+  padding: 4px 8px;
+  font-weight: bold;
+  color: #FF6347; /* Tomato color for the icon, feel free to change */
+  border-radius: 50%; /* Circular background on hover */
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.likes .delete-icon:hover,
+.comments .delete-icon:hover {
+  background-color: #FF6347; /* Tomato background on hover */
+  color: white; /* White X on hover */
+}
+
+.likes tr:nth-child(even),
+.comments tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.likes tr:hover,
+.comments tr:hover {
+  background-color: #ddd;
+}

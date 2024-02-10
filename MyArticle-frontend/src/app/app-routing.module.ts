@@ -6,7 +6,6 @@ import { ArticleDetailComponent } from './article-detail/article-detail.componen
 import { ArticleEditComponent } from './article-edit/article-edit.component';
 import { HomeComponent } from './home/home.component';
 import { LoginComponent } from './login/login.component';
-import { RegisterComponent } from './register/register.component';
 import { ArticleCategoryComponent } from './article-category/article-category.component';
 import { ArticleSearchComponent } from './article-search/article-search.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
@@ -15,6 +14,8 @@ import { ManageUsersComponent } from './manage-users/manage-users.component';
 import { ManageArticlesComponent } from './manage-articles/manage-articles.component';
 import { ManageCategoriesComponent } from './manage-categories/manage-categories.component';
 import { AnalyticsComponent } from './analytics/analytics.component';
+import { ManageInteractionsComponent } from './manage-interactions/manage-interactions.component';
+import { ManageNotificationsComponent } from './manage-notifications/manage-notifications.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -25,13 +26,10 @@ const routes: Routes = [
   { path: 'edit-article/:id', component: ArticleEditComponent },
   { path: 'login', component: LoginComponent},
   { path: 'home', component: HomeComponent },
-  { path: 'register', component: RegisterComponent },
   { path: 'categories/:id', component: ArticleCategoryComponent },
   { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent },
   { path: '', component: HomeComponent },
   { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent },
   { path: 'logout', redirectTo: '/login' }, // Assuming logout is handled elsewhere
   { path: 'like/:articleId', component: ArticleDetailComponent },
   { path: 'search-results', component: ArticleSearchComponent },
@@ -41,8 +39,8 @@ const routes: Routes = [
   { path: 'manage-articles', component: ManageArticlesComponent},
   { path: 'manage-categories', component: ManageCategoriesComponent},
   { path: 'analytics', component: AnalyticsComponent},
-
-
+  { path: 'manage-interactions/:articleId', component: ManageInteractionsComponent},
+  { path: 'manage-notifications', component: ManageNotificationsComponent},
 
 
 ];

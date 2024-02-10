@@ -23,6 +23,38 @@ export class ManageUsersComponent implements OnInit {
       }
     });
   }
+  deleteUser(userId: string): void {
+    // Check if the admin is authenticated
+    this.adminService.checkSessionStatus().subscribe(
+      (loggedIn) => {
+        if (loggedIn) {
+          // If authenticated, prompt for confirmation before deleting
+          if (confirm('Are you sure you want to delete this user?')) {
+            // If confirmed, call the service to delete the user
+            this.adminService.deleteUser(userId).subscribe(
+              () => {
+                // Remove the deleted user from the local array
+                this.users = this.users.filter(user => user.id !== userId);
+                console.log('User deleted successfully');
+              },
+              (error) => {
+                console.error('Error deleting user:', error);
+              }
+            );
+          }
+        } else {
+          console.log('Admin not logged in, redirecting to login...');
+          // Redirect to login page
+          this.router.navigate(['/login']);
+        }
+      },
+      (error) => {
+        console.error('Error checking admin session status:', error);
+        // Redirect to login page as a fallback
+        this.router.navigate(['/login']);
+      }
+    );
+  }
   logout(): void {
     console.log('Logout method called');
     this.adminService.logoutAdmin(); // Assuming this method doesn't return an Observable

@@ -47,33 +47,53 @@
 
 
     <div class="register-section">
-    <!-- Registration Form -->
-    <form *ngIf="showRegisterForm" (ngSubmit)="onRegister()">
-      <!-- Insert registration form fields similar to the login form fields -->
-      <div class="form-group">
-        <label for="registerEmail">Email:</label>
-        <input type="email" id="registerEmail" [(ngModel)]="user.email" name="email" placeholder="Your Email" required>
-      </div>
+      <!-- Registration Form -->
+      <form *ngIf="showRegisterForm" (ngSubmit)="onRegister()">
+        <!-- Email -->
+        <div class="form-group">
+          <label for="registerEmail">Email:</label>
+          <input type="email" id="registerEmail" [(ngModel)]="user.email" name="email" placeholder="Your Email" required>
+        </div>
+<!-- Username -->
+<div class="form-group">
+  <label for="registerUsername">Username:</label>
+  <input type="text" id="registerUsername" [(ngModel)]="user.username" name="username" placeholder="Your Username" required>
+</div>
 
-      <div class="form-group">
-        <label for="registerPassword">Password:</label>
-        <input type="password" id="registerPassword" [(ngModel)]="user.password" name="password" placeholder="Create Password" required>
-      </div>
+        <!-- Password -->
+        <div class="form-group">
+          <label for="registerPassword">Password:</label>
+          <input type="password" id="registerPassword" [(ngModel)]="user.password" name="password" placeholder="Create Password" required>
+        </div>
 
-      <div class="form-group">
-        <label for="confirmPassword">Confirm Password:</label>
-        <input type="password" id="confirmPassword" [(ngModel)]="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required>
-      </div>
+        <!-- Confirm Password -->
+        <div class="form-group">
+          <label for="confirmPassword">Confirm Password:</label>
+          <input type="password" id="confirmPassword" [(ngModel)]="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required>
+        </div>
 
-      <button type="submit" class="explore-button4">Register</button>
+        <!-- First Name -->
+        <div class="form-group">
+          <label for="registerFirstName">First Name:</label>
+          <input type="text" id="registerFirstName" [(ngModel)]="user.firstName" name="firstName" placeholder="Your First Name" required>
+        </div>
 
-    </form>
-    <a *ngIf="showRegisterForm" (click)="showRegisterForm = false" class="back-to-login-link">Back to Login</a>
+        <!-- Last Name -->
+        <div class="form-group">
+          <label for="registerLastName">Last Name:</label>
+          <input type="text" id="registerLastName" [(ngModel)]="user.lastName" name="lastName" placeholder="Your Last Name" required>
+        </div>
 
+        <button type="submit" class="explore-button4">Register</button>
+      </form>
 
-    <!-- Error Message -->
-    <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+      <!-- Back to Login Link -->
+      <a *ngIf="showRegisterForm" (click)="showRegisterForm = false" class="back-to-login-link">Back to Login</a>
+
+      <!-- Error Message -->
+      <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
     </div>
+
 
     <!-- Sign Up Link -->
     <!-- Existing login page content -->

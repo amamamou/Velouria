@@ -14,6 +14,80 @@ export class AdminService {
   private adminId: string | undefined;
 
   constructor(private router: Router, private http: HttpClient) {}
+  getAllNotifications(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/notifications`);
+  }
+  deleteNotification(notificationId: string): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/notifications/${notificationId}`, { headers: this.getHeaders() }).pipe(
+      catchError(error => {
+        if (error.status === 401) {
+          console.error('Unauthorized error. Redirecting to login page.');
+          this.router.navigate(['/login']);
+        }
+        console.error('Error deleting the notification:', error);
+        return throwError('Error deleting the notification. Please try again.');
+      })
+    );
+  }
+
+  deleteComment(commentId: string): Observable<any> {
+    const url = `${this.apiUrl}/comments/${commentId}`;
+    const headers = this.getHeaders();
+    return this.http.delete<any>(url, { headers }).pipe(
+      catchError(error => {
+        if (error.status === 401) {
+          console.error('Unauthorized error. Redirecting to login page.');
+          this.router.navigate(['/login']);
+        }
+        console.error('Error deleting the comment:', error);
+        return throwError('Error deleting the comment. Please try again.');
+      })
+    );
+  }
+
+
+  getArticleComments(articleId: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/api/articles/${articleId}/comments`);
+  }
+
+  getArticleLikes(articleId: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/api/articles/${articleId}/likes`);
+  }
+  deleteCategory(categoryId: string): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/categories/${categoryId}`, { headers: this.getHeaders() }).pipe(
+      catchError(error => {
+        if (error.status === 401) {
+          console.error('Unauthorized error. Redirecting to login page.');
+          this.router.navigate(['/login']);
+        }
+        console.error('Error deleting the category:', error);
+        return throwError('Error deleting the category. Please try again.');
+      })
+    );
+  }
+
+  // Method to delete a user by ID
+  deleteUser(userId: string): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/users/${userId}`, { headers: this.getHeaders() }).pipe(
+      catchError(error => {
+        console.error('Error deleting user:', error);
+        return throwError('Error deleting user. Please try again.');
+      })
+    );
+  }
+   // Method to delete an article by ID
+   deleteArticle(articleId: string): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/articles/${articleId}`, { headers: this.getHeaders() }).pipe(
+      catchError(error => {
+        if (error.status === 401) {
+          console.error('Unauthorized error. Redirecting to login page.');
+          this.router.navigate(['/login']);
+        }
+        console.error('Error deleting the article:', error);
+        return throwError('Error deleting the article. Please try again.');
+      })
+    );
+  }
   getCategories(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/categories`);
   }

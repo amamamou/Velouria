@@ -88,29 +88,28 @@ export class LoginComponent implements OnInit {
       }
     );
   }
-
-  onRegister() {
-    if (this.user.password !== this.confirmPassword) {
-      this.errorMessage = 'Passwords do not match.';
-      return;
-    }
-
-    this.userService.registerUser(this.user.email, this.user.password).subscribe(
-      response => {
-        // After successful registration, automatically log in the user or direct them to the login page.
-        // Assuming the backend also returns a token upon registration, similar to login.
-        if (response && response.token) {
-          localStorage.setItem('token', response.token); // Save the token
-          this.router.navigate(['/article-list']); // Redirect to articles list
-        } else {
-          // If no token is returned, direct user to manually log in.
-          this.router.navigate(['/login']);
+  onRegister(): void {
+    this.userService.registerUser(this.user.email, this.user.password, this.user.firstName, this.user.lastName, this.user.username)
+      .subscribe(
+        (response) => {
+          console.log('User registration response:', response);
+          if (response && response.message === 'User registered successfully') {
+            // Registration was successful, redirect to the login page
+            this.showRegisterForm = false;
+          } else if (response && response.error) {
+            console.error('User registration error:', response.error);
+            this.errorMessage = response.error;
+          } else {
+            console.error('Invalid response from the server');
+            this.errorMessage = 'Invalid response from the server';
+          }
+        },
+        (error) => {
+          console.error('User registration error:', error);
+          this.errorMessage = error.message || 'An error occurred during user registration.';
         }
-      },
-      (error) => {
-        console.error('Registration error:', error);
-        this.errorMessage = error.message || 'An error occurred during registration.';
-      }
-    );
+      );
   }
+
+
 }
