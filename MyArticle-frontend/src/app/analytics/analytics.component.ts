@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Chart } from 'chart.js';
 import { AdminService } from '../admin.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-analytics',
@@ -11,12 +12,16 @@ export class AnalyticsComponent implements OnInit {
   articlePopularityData: any[] = [];
   articlePopularityChart: Chart | null = null;
 
-  constructor(private adminService: AdminService) {}
+  constructor(private router: Router, private adminService: AdminService) {}
 
   ngOnInit(): void {
     this.fetchArticlePopularity();
   }
-
+  logout(): void {
+    console.log('Logout method called');
+    this.adminService.logoutAdmin(); // Assuming this method doesn't return an Observable
+    this.router.navigate(['/login']).catch((err: any) => console.error('Navigation Error:', err));
+  }
   fetchArticlePopularity(): void {
     this.adminService.getArticlePopularity().subscribe(
       (data) => {
