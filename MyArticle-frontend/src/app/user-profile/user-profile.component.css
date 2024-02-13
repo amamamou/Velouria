@@ -66,8 +66,7 @@
   border: 1px solid #ddd;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  margin: 20px;
+
   width: 300px;
   min-height: 250px;
   overflow: hidden;
@@ -195,4 +194,8 @@
   font-family: 'Roboto Slab', serif; /* Roboto Slab font */
   cursor: pointer;
   margin-left: 690px;
+}
+.ellipsis-icon {
+  font-size: 1.8em; /* Adjust size as needed */
+  margin-right: -1100px; /* Add space between the comment icon and the ellipsis */
 }

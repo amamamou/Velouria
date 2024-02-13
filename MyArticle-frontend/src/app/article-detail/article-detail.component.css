@@ -168,3 +168,7 @@
 .comment-input button:hover {
   background-color: #dcd6d6;
 }
+.ellipsis-icon {
+  font-size: 1.8em; /* Adjust size as needed */
+  margin-bottom: 10px;
+}

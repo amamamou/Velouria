@@ -8,5 +8,6 @@ export interface Article {
   isLiked?: boolean; // Keep the type as boolean
   comments?: any[]; // Add comments property
   likes?: any[];    // Add likes property
+  time?: number;    // Add time property
 
 }

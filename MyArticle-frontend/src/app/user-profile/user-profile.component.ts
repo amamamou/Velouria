@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../user.service';
+import { ArticleService } from '../article.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-user-profile',
@@ -11,7 +13,7 @@ export class UserProfileComponent implements OnInit {
   likedArticles: any[] = [];
 
 
-  constructor(private userService: UserService) { }
+  constructor(private articleService: ArticleService, private router: Router, private userService: UserService) { }
 
   ngOnInit(): void {
     this.fetchUserProfile();
@@ -46,6 +48,11 @@ export class UserProfileComponent implements OnInit {
         console.error('Error fetching liked articles:', error);
       }
     );
+  }
+  logout(): void {
+    console.log('Logout method called');
+    this.articleService.logout(); // Assuming this method doesn't return an Observable
+    this.router.navigate(['/login']).catch((err: any) => console.error('Navigation Error:', err));
   }
 
 }

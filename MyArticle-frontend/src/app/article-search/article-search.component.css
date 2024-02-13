@@ -140,3 +140,13 @@
   cursor: pointer;
   margin-left: 690px;
 }
+.article-time {
+  font-size: 0.8em; /* Smaller font size for subtlety */
+  display: block; /* Ensures the time appears on its own line */
+  font-style: italic; /* Adds a touch of elegance */
+  text-align: center; /* Centers the time text */
+  font-family: 'Cormorant', serif; /* Elegant, serif font for a refined look */
+  margin: 0; /* Removes any default margin for a tight layout */
+  padding: 5px 0; /* Minimal padding to space it from other elements */
+  color: #757575; /* Soft, dark gray for minimal visual impact */
+}

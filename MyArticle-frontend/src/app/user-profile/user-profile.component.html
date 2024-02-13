@@ -4,7 +4,9 @@
     <img src="/assets/images/{{ userProfile?.profile_pic }}" alt="Profile Picture" (error)="imageError($event)">
   </div>
   <div class="username">@{{ userProfile.username }}</div>
-  <div class="name">{{ userProfile?.first_name }} {{ userProfile?.last_name }}</div>
+  <div class="name">{{ userProfile?.first_name }} {{ userProfile?.last_name }} <div>   <span class="ellipsis-icon">&#x2026;</span> <!-- Ellipsis character represented by its Unicode -->
+  </div>
+</div>
   <hr class="elegant-separator">
 
 
@@ -20,3 +22,4 @@
       <h2 class="article-title">{{ article.title }}</h2>
     </div>
 </div>
+   <li><a href="/login" (click)="logout()">Logout</a></li>
