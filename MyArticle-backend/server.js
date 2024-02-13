@@ -390,13 +390,12 @@ app.post('/register', async (req, res) => {
     return res.status(500).json({ error: 'Internal Server Error during registration' });
   }
 });
-
-
+//notifications
 app.get('/notifications', async (req, res) => {
   try {
-    // Query to select all notifications from the database
-    const query = 'SELECT * FROM notifications ORDER BY created_at DESC';
-    const notifications = await connection.query(query);
+    // Query to select notifications with recipientType set to 'admin'
+    const query = 'SELECT * FROM notifications WHERE recipientType = ? ORDER BY created_at DESC';
+    const notifications = await connection.query(query, ['admin']);
 
     // Send the fetched notifications as a response
     res.status(200).json(notifications);
@@ -601,13 +600,14 @@ app.post('/like-article/:articleId', isAuthenticated, async (req, res) => {
   }
 });
 async function createNotificationForAdmin(notification) {
-  try {
+   try {
     // Assuming you have a connection to your database established
     // Execute the query to insert the notification
-    await connection.query('INSERT INTO notifications (title, message, type) VALUES (?, ?, ?)', [
+     await connection.query('INSERT INTO notifications (title, message, type, recipientType) VALUES (?, ?, ?, ?)', [
       notification.title,
       notification.message,
-      notification.type
+      notification.type,
+      'admin' // Set the recipientType to 'admin'
     ]);
     console.log('Notification created successfully.');
   } catch (error) {
@@ -834,6 +834,7 @@ app.delete('/categories/:id', isAdminAuthenticated, async (req, res) => {
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+//com
 app.delete('/comments/:commentId', isAdminAuthenticated, async (req, res) => {
   const commentId = req.params.commentId;
   
@@ -854,7 +855,7 @@ app.delete('/comments/:commentId', isAdminAuthenticated, async (req, res) => {
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-
+//notif
 app.delete('/notifications/:notificationId', isAdminAuthenticated, async (req, res) => {
   const notificationId = req.params.notificationId;
 
