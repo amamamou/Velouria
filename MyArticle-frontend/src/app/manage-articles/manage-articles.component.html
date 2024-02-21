@@ -21,6 +21,12 @@
   </div>
 <!-- article-list.component.html -->
 <div class="article-container">
+  <div class="article-card create-article-card" [routerLink]="['/create']">
+    <!-- Plus Icon -->
+    <div class="plus-icon">+</div>
+    <!-- Create New Article Text -->
+    <div class="create-article-text">Create a new article</div>
+  </div>
 
   <div *ngFor="let article of articles" class="article-card">
     <!-- Top Section with Background Image -->

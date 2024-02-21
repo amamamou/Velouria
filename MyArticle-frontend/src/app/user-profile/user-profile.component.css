@@ -199,3 +199,9 @@
   font-size: 1.8em; /* Adjust size as needed */
   margin-right: -1100px; /* Add space between the comment icon and the ellipsis */
 }
+.heart-icon {
+  font-size: 30px; /* Adjust the size as needed */
+  cursor: pointer;
+  transition: color 0.3s ease-in-out;
+  margin-left: 60px;
+}

@@ -550,7 +550,7 @@ app.post('/add-comment/:articleId', isAuthenticated, async (req, res) => {
 // Function to record a comment in the database
 async function recordComment(userId, articleId, commentText) {
   try {
-    const sql = 'INSERT INTO comments (article_id, user_id, comment_text, created_at, updated_at) VALUES (?, ?, ?, NOW(), NOW())';
+    const sql = 'INSERT INTO comments (article_id, user_id, comment_text, created_at) VALUES (?, ?, ?, NOW())';
     const result = await connection.query(sql, [articleId, userId, commentText]);
     if (result.affectedRows > 0) {
       return true; // Comment successfully recorded

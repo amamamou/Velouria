@@ -39,13 +39,7 @@ body, html {
   flex-grow: 1; /* Optional: allows buttons to expand to fill the space */
 }
 
-.form-container {
-  padding: 20px;
-  max-width: 400px;
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
+
 
 .explore-button4 {
   background-color: #000000;
@@ -104,4 +98,55 @@ body, html {
 .form-group input:focus {
   outline: none;
   border-color: #007bff; /* Change border color on focus */
+}
+
+
+
+
+.register-section .wide-form-group {
+  width: 100%;
+}
+
+
+.register-section .wide-form-group label {
+  font-weight: bold; /* Make labels bold */
+}
+.register-section{
+  margin-bottom: -200px;
+}
+
+
+
+.register-section .wide-form-group label {
+  display: block;
+  font-weight: bold; /* Make labels bold */
+  color: #333;
+}
+
+.register-section .wide-form-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  transition: border-color 0.3s;
+}
+
+.register-section .wide-form-group input:focus {
+  outline: none;
+  border-color: #007bff; /* Change border color on focus */
+}
+
+.register-section
+.explore-button4 {
+  background-color: #000000;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 0;
+  font-size: 12px;
+  font-family: 'Roboto Slab', serif;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 10px;
 }

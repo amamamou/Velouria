@@ -20,7 +20,10 @@
     <div class="separator"></div> <!-- Vertical separator -->
   </div>
   <div class="container">
-    <h2 style="font-family: 'Anton', sans-serif;">ARTICLE ID: {{ articleId }}</h2>
+    <h2 style="font-family: 'Anton', sans-serif;">
+      ARTICLE ID: {{ articleId }}
+      <a href="/update-article/{{ articleId }}" style="font-size: 0.6em; margin-left: 10px; color: rgba(231, 84, 128, 0.5);">Update It </a>
+    </h2>
 
     <div class="likes">
       <h3 style="font-family: 'Anton', sans-serif;">Likes</h3>
@@ -29,15 +32,12 @@
           <tr>
             <th>User ID</th>
             <th>Username</th>
-            <th>Action</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let like of likes">
             <td>{{ like.user_id }}</td>
-            <td>{{ like.username }}</td>
-            <td>
-            </td>
+            <td>@{{ like.username }}</td>
           </tr>
         </tbody>
       </table>
@@ -55,7 +55,7 @@
         </thead>
         <tbody>
           <tr *ngFor="let comment of comments">
-            <td>{{ comment.username }}</td>
+            <td>@{{ comment.username }}</td>
             <td>{{ comment.comment_text }}</td>
             <td>
               <span class="delete-icon" (click)="deleteComment(comment.comment_id)">X</span>

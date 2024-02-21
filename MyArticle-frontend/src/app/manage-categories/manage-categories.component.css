@@ -63,24 +63,6 @@
 
 
 
-.article-preview {
-  flex: 0 0 auto; /* Do not grow, do not shrink, base width on content */
-  color: white;
-  margin-right: 20px; /* Space between articles */
-  width: 300px; /* Fixed width */
-  height: 250px; /* Fixed height */
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  border-radius: 10px;
-  overflow: hidden; /* Ensures content fits in the fixed size */
-}
-
-.article-preview:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-
 
 .article-card {
   background-color: #f9f9f9;
@@ -223,7 +205,6 @@ margin-top: -10px;
 }
 
 .article-preview {
-  color: white;
   margin-right: 20px;
   width: 300px; /* Fixed width for each category */
   height: 250px;
@@ -251,4 +232,22 @@ margin-top: -10px;
 
 .delete-btn:hover {
   background-color: #c0392b;
+}
+
+
+.create-new-article:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.plus-icon {
+  font-size: 64px;
+  color: rgba(231, 84, 128, 0.5);
+  font-family: 'Anton', sans-serif;
+}
+
+.create-article-text {
+  margin-top: 10px; /* Add space between plus icon and text */
+  font-size: 24px; /* Adjust font size for the text */
+  font-family: 'Anton', sans-serif; /* Set font family for the text */
 }

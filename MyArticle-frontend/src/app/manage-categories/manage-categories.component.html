@@ -22,10 +22,19 @@
   <section id="curated-articles">
     <div class="content-wrapper">
       <div class="article-collection">
+        <!-- Card for creating a new article -->
+        <div class="article-preview create-new-article" style="border: 2px dashed rgba(231, 84, 128, 0.5);">
+          <div class="article-details" [routerLink]="['/create']">
+            <span class="plus-icon">+</span>
+            <h2 class="create-article-text">Create a new category</h2>
+          </div>
+        </div>
+
+
+        <!-- Displayed categories -->
         <article *ngFor="let category of categories" class="article-preview" >
           <div class="article-details" [style.background-image]="'url(' + category.image + ')'">
             <button class="delete-btn" (click)="deleteCategory(category.id)">Delete</button>
-
           </div>
         </article>
       </div>
