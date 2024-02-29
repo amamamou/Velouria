@@ -11,7 +11,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
 import { HomeComponent } from './home/home.component';
-import { LoginComponent } from './login/login.component';
 import { ModalComponent } from './modal/modal.component';
 import { ArticleCategoryComponent } from './article-category/article-category.component';
 import { DefaultImagePipe } from 'src/default-image.pipe';
@@ -26,6 +25,7 @@ import { ManageCategoriesComponent } from './manage-categories/manage-categories
 import { AnalyticsComponent } from './analytics/analytics.component';
 import { ManageInteractionsComponent } from './manage-interactions/manage-interactions.component';
 import { ManageNotificationsComponent } from './manage-notifications/manage-notifications.component';
+import { LoginComponent } from './login/login.component';
 
 
 
@@ -63,13 +63,8 @@ import { ManageNotificationsComponent } from './manage-notifications/manage-noti
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
-    CommonModule,
-
-
-
-
-
   ],
+
   providers: [],
   bootstrap: [AppComponent]
 })

@@ -41,9 +41,7 @@ export class LoginComponent implements OnInit {
     // Or making a backend call that verifies the token's validity.
     // For simplicity, we'll just check for the presence of a token.
     const token = localStorage.getItem('token');
-    if (token) {
-      this.router.navigate(['/article-list']);
-    }
+
   }
 
   onAdminLogin(): void {
@@ -83,6 +81,7 @@ export class LoginComponent implements OnInit {
         }
       },
       (error) => {
+
         console.error('Login error:', error);
         this.errorMessage = error.message || 'An error occurred during login.';
       }

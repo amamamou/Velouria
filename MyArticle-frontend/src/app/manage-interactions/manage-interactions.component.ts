@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AdminService } from '../admin.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ArticleService } from '../article.service';
+import { Article } from '../article.model';
 
 @Component({
   selector: 'app-manage-interactions',
@@ -12,6 +13,8 @@ export class ManageInteractionsComponent implements OnInit {
   articleId: string = ''; // Initialize with an empty string
   comments: any[] = [];
   likes: any[] = [];
+  article: Article | undefined;
+
 
   constructor(
     private route: ActivatedRoute, // Inject ActivatedRoute instead of Router

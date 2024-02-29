@@ -4,15 +4,31 @@
     <img src="/assets/images/{{ userProfile?.profile_pic }}" alt="Profile Picture" (error)="imageError($event)">
   </div>
   <div class="username">@{{ userProfile.username }}</div>
-  <div class="name">{{ userProfile?.first_name }} {{ userProfile?.last_name }} <div>   <span class="ellipsis-icon">&#x2026;</span> <!-- Ellipsis character represented by its Unicode -->
+  <div class="name">{{ userProfile?.first_name }} {{ userProfile?.last_name }}
+
+
+  <!-- Container to position dropdown correctly -->
+  <div style="position: relative;">
+    <!-- Ellipsis icon with click event -->
+    <span class="ellipsis-icon" (click)="toggleDropdown()">&#x2026;</span>
+
+    <!-- Dropdown container -->
+    <div class="dropdown-container" *ngIf="showDropdown">
+      <!-- Logout button -->
+      <button class="logout-button" (click)="logout()">Edit profile</button><br><br>
+      <button class="logout-button" (click)="logout()">Notifications</button><br><br>
+      <button class="logout-button" (click)="logout()">Logout</button>
+    </div>
   </div>
+</div>
+
 </div>
   <hr class="elegant-separator">
 
 
 
   <!-- Additional details can be added here -->
-</div>
+
 <div class="article-interaction-section">
   <span [class]="'heart-icon'" title="Like this article">♡</span>
 
@@ -29,4 +45,4 @@
       <h2 class="article-title">{{ article.title }}</h2>
     </div>
 </div>
-   <li><a href="/login" (click)="logout()">Logout</a></li>
+

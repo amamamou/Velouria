@@ -11,7 +11,11 @@ import { Router } from '@angular/router';
 export class UserProfileComponent implements OnInit {
   userProfile: any;
   likedArticles: any[] = [];
+  showDropdown: boolean = false; // Variable to toggle dropdown visibility
 
+  toggleDropdown() {
+    this.showDropdown = !this.showDropdown; // Toggle the value
+  }
 
   constructor(private articleService: ArticleService, private router: Router, private userService: UserService) { }
 

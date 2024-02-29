@@ -1,7 +1,27 @@
-<!-- article-edit.component.html -->
-<div class="article-edit-wrapper">
+<!-- article-create.component.html -->
+<div class="dashboard-container">
+  <!-- Sidebar -->
+  <div class="sidebar-container">
+    <div class="sidebar">
+      <h2 routerLink="/home">VELOURIA</h2>
+      <ul>
+        <li><i class="fas fa-home"></i><a routerLink="/admin-dashboard" routerLinkActive="active">&nbsp;&nbsp;Dashboard</a></li>
+        <li><i class="fas fa-newspaper"></i><a routerLink="/manage-articles" routerLinkActive="active">&nbsp;&nbsp;Manage Articles</a></li>
+        <li><i class="fas fa-users"></i><a routerLink="/manage-users" routerLinkActive="active">&nbsp;&nbsp;Manage Users</a></li>
+        <li><i class="fas fa-users"></i><a routerLink="/manage-categories" routerLinkActive="active">&nbsp;&nbsp;Manage Categories</a></li>
+        <li><i class="fas fa-chart-line"></i><a routerLink="/analytics" routerLinkActive="active">&nbsp;&nbsp;Analytics</a></li>
+        <li><i class="fas fa-bell"></i><a routerLink="/manage-notifications" routerLinkActive="active">&nbsp;&nbsp;Notifications</a></li>
+        <li><i class="fas fa-envelope"></i><a routerLink="/manage-messages" routerLinkActive="active">&nbsp;&nbsp;Messages</a></li>
+        <li><i class="fas fa-cog"></i><a routerLink="/dashboard/settings" routerLinkActive="active">&nbsp;&nbsp;Settings</a></li>
+        <li><i class="fas fa-toolbox"></i><a routerLink="/dashboard/tools" routerLinkActive="active">&nbsp;&nbsp;Tools</a></li>
+        <li><i class="fas fa-question-circle"></i><a routerLink="/dashboard/support" routerLinkActive="active">&nbsp;&nbsp;Support</a></li>
+        <li><i class="fas fa-sign-out-alt"></i><a (click)="logout()">&nbsp;&nbsp;Logout</a></li>
+      </ul>
+    </div>
+    <div class="separator"></div> <!-- Vertical separator -->
+  </div><div class="article-create-wrapper">
   <form (submit)="onSubmit()" class="article-form">
-    <h2 class="form-header">Edit Article</h2>
+    <h2 class="form-header">New Article</h2>
 
     <div class="form-field">
       <input type="text" id="title" [(ngModel)]="article.title" name="title" required>
@@ -20,7 +40,6 @@
 
     <div class="form-field">
       <select id="category" [(ngModel)]="article.category_id" name="category_id" required>
-        <option value="0">Category 0</option>
         <option value="1">Category 1</option>
         <option value="2">Category 2</option>
         <option value="3">Category 3</option>
@@ -33,9 +52,9 @@
 
     <div class="form-field file-input">
       <input type="file" id="file" name="file" (change)="onFileSelected($event)">
-      <label for="file">Choose Image</label>
+      <label for="file" class="file-label">Choose Image</label>
     </div>
 
-    <button type="submit" class="publish-btn">Update Article</button>
+    <button type="submit" class="publish-btn">Publish Article</button>
   </form>
 </div>

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ArticleService } from '../article.service';
 import { Article } from '../article.model';  // Make sure this is correctly imported
+import { AdminService } from '../admin.service';
 
 @Component({
   selector: 'app-article-create',
@@ -13,7 +14,7 @@ export class ArticleCreateComponent {
   article: Article = { title: '', content: '', author: '', image: '', category_id: 0 };
   selectedFile: File | null = null;
 
-  constructor(private articleService: ArticleService, private router: Router) {}
+  constructor(private adminService: AdminService, private articleService: ArticleService, private router: Router) {}
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -36,11 +37,16 @@ export class ArticleCreateComponent {
     this.articleService.createArticle(formData).subscribe({
       next: (result) => {
         console.log('Article Created', result);
-        this.router.navigate(['/article-list']).catch(err => console.error('Navigation Error:', err));
+        this.router.navigate(['/manage-articles']).catch(err => console.error('Navigation Error:', err));
       },
       error: (error) => {
         console.error('Error creating article', error);
       }
     });
+  }
+  logout(): void {
+    console.log('Logout method called');
+    this.adminService.logoutAdmin(); // Assuming this method doesn't return an Observable
+    this.router.navigate(['/login']).catch((err: any) => console.error('Navigation Error:', err));
   }
 }

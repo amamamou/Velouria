@@ -24,12 +24,8 @@ const routes: Routes = [
   { path: 'create', component: ArticleCreateComponent },
   { path: 'article/:id', component: ArticleDetailComponent },
   { path: 'edit-article/:id', component: ArticleEditComponent },
-  { path: 'login', component: LoginComponent},
   { path: 'home', component: HomeComponent },
   { path: 'categories/:id', component: ArticleCategoryComponent },
-  { path: 'login', component: LoginComponent },
-  { path: '', component: HomeComponent },
-  { path: 'login', component: LoginComponent },
   { path: 'logout', redirectTo: '/login' }, // Assuming logout is handled elsewhere
   { path: 'like/:articleId', component: ArticleDetailComponent },
   { path: 'search-results', component: ArticleSearchComponent },
@@ -41,6 +37,8 @@ const routes: Routes = [
   { path: 'analytics', component: AnalyticsComponent},
   { path: 'manage-interactions/:articleId', component: ManageInteractionsComponent},
   { path: 'manage-notifications', component: ManageNotificationsComponent},
+  { path: 'login', component: LoginComponent},
+
 
 
 ];

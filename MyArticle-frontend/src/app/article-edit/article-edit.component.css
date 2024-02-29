@@ -1,31 +1,139 @@
-.container {
-  max-width: 600px;
-  margin: 20px auto;
+/* Styles for article edit */
+.dashboard-container {
+  display: flex;
+  min-height: 98.7vh;
 }
 
-.form-group {
-  margin-bottom: 15px;
+.article-create-wrapper {
+  width: calc(100% - 300px); /* Adjust based on your sidebar width */
+  padding: 40px;
 }
 
-.form-control {
+.article-form {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+}
+
+.form-header {
+  font-family: 'Anton', sans-serif; /* Use Anton font */
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.form-field {
+  margin-bottom: 20px;
+}
+
+.form-field label {
+  display: block;
+  margin-bottom: 5px;
+  color: #666666;
+}
+
+.form-field input,
+.form-field textarea,
+.form-field select {
   width: 100%;
+  padding: 10px;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  font-size: 16px;
 }
 
-.form-control-file {
-  margin-top: 10px;
+.file-input input[type="file"] {
+  display: none;
 }
 
-.btn {
+.file-input .file-label {
+  cursor: pointer;
+  background-color: rgba(231, 84, 128, 0.5);
+  color: #ffffff;
+  padding: 10px 20px;
+  border-radius: 4px;
+  text-align: center;
+  display: inline-block;
+}
 
-    justify-content: center; /* Centers the button horizontally */
-    align-items: center;
-    background-color: #000000; /* Button background color */
-    color: white; /* Text color */
-    padding: 10px 20px;
-    border: none;
-    border-radius: 0; /* Sharp corners */
-    font-size: 12px;
-    font-family: 'Roboto Slab', serif; /* Roboto Slab font */
-    cursor: pointer;
+.file-input .file-label:hover {
+  background-color:  rgba(101, 67, 33, 0.5);
+}
 
+.publish-btn {
+  width: 100%;
+  background-color: #000000;
+  color: #ffffff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.publish-btn:hover {
+  background-color: #333333;
+}
+
+
+/* Sidebar styles */
+.sidebar-container {
+  display: flex;
+}
+
+.sidebar {
+  background-color: #f9f9f9;
+  color: rgba(101, 67, 33, 0.5);
+  padding: 50px 20px;
+  width: 300px;
+  font-family: 'Anton', sans-serif; /* Use Anton font */
+}
+
+.sidebar h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 60px;
+  margin-bottom: 60px;
+  margin-left: -10px;
+  color: #000000;
+  font-weight: bold;
+  position: fixed;
+  margin-top: -10px;
+}
+
+.sidebar ul {
+  color: rgba(101, 67, 33, 0.5);
+  list-style-type: none;
+  padding: 0;
+  position: fixed;
+  margin-top: 90px;
+}
+
+.sidebar li {
+  color: rgba(210, 180, 140, 0.5);
+  margin-bottom: 20px;
+}
+
+.sidebar a {
+  color: rgba(101, 67, 33, 0.5);
+  text-decoration: none;
+  font-size: 22px;
+}
+
+.sidebar a:hover {
+  color: rgba(231, 84, 128, 0.5);
+}
+
+.sidebar .active {
+  color: #5DADE2;
+}
+
+.separator {
+  position: fixed;
+  width: 1px;
+  background-color: lightgrey;
+  height: 100%;
+  margin-left: 340px;
 }

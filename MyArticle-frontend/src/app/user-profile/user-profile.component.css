@@ -16,7 +16,7 @@
   overflow: hidden;
   background-color: #eee; /* Light background for the placeholder */
   margin-bottom: 10px; /* More space below the image */
-  margin-right: 1200px;
+  margin-right: 1400px;
 }
 
 .profile-pic {
@@ -28,7 +28,7 @@
 .username {
   font-size: 24px;
   margin-bottom: 10px; /* Space before the hr */
-  margin-right: 1140px;
+  margin-right: 1380px;
 
 }
 
@@ -198,6 +198,9 @@
 .ellipsis-icon {
   font-size: 1.8em; /* Adjust size as needed */
   margin-right: -1100px; /* Add space between the comment icon and the ellipsis */
+    cursor: pointer;
+    position: relative;
+
 }
 .heart-icon {
   font-size: 30px; /* Adjust the size as needed */
@@ -205,3 +208,29 @@
   transition: color 0.3s ease-in-out;
   margin-left: 60px;
 }
+/* user-profile.component.css */
+
+.dropdown-container {
+  position: absolute;
+  top: -150px; /* Adjust as needed to position correctly */
+  right: 220px;
+  background-color: #f9f9f9; /* Adjust color as needed */
+  border-radius: 0px;
+  padding: 10px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  /* No need for 'display: none;' since Angular controls visibility */
+}
+.logout-button
+{
+width: 100%;
+    justify-content: center; /* Centers the button horizontally */
+    align-items: center;
+    background-color: #000000; /* Button background color */
+    color: white; /* Text color */
+    padding: 10px 20px;
+    border: none;
+    border-radius: 0; /* Sharp corners */
+    font-size: 12px;
+    font-family: 'Roboto Slab', serif; /* Roboto Slab font */
+    cursor: pointer;
+  }

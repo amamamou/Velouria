@@ -1,10 +1,13 @@
-<nav class="navbar">
+<head><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+</head><nav class="navbar">
     <div class="brand-title" [routerLink]="['/home']">VELOURIA</div>
     <div class="separator"></div>
     <div class="navbar-links">
         <ul>
-          <li><a href="/profile">Sign in</a></li>
-            <li><input type="text" placeholder="Search articles..." [(ngModel)]="searchTerm" (keyup.enter)="search()" /></li>
+
+          <li><input type="text" placeholder="Search articles..." [(ngModel)]="searchTerm" (keyup.enter)="search()" /></li>
+          <li><a href="/profile"><i class="far fa-user"></i> </a></li>
+
 
        <!--     <li><a href="/login" (click)="logout()">Logout</a></li>-->
 

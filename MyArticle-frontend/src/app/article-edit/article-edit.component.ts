@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ArticleService } from '../article.service';
 import { Article } from '../article.model';
+import { AdminService } from '../admin.service';
 
 @Component({
   selector: 'app-article-edit',
@@ -13,6 +14,7 @@ export class ArticleEditComponent implements OnInit {
   selectedFile: File | null = null;
 
   constructor(
+    private adminService: AdminService,
     private articleService: ArticleService,
     private route: ActivatedRoute,
     private router: Router
@@ -60,7 +62,12 @@ export class ArticleEditComponent implements OnInit {
     }
 
     this.articleService.updateArticle(id, formData).subscribe({
-      next: () => this.router.navigate(['/articles']),error: (err) => console.error('Error updating article:', err)
+      next: () => this.router.navigate(['/manage-articles']),error: (err) => console.error('Error updating article:', err)
     });
+  }
+  logout(): void {
+    console.log('Logout method called');
+    this.adminService.logoutAdmin(); // Assuming this method doesn't return an Observable
+    this.router.navigate(['/login']).catch((err: any) => console.error('Navigation Error:', err));
   }
 }
