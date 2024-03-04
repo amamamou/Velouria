@@ -19,6 +19,7 @@ export class ArticleDetailComponent implements OnInit {
   showCommentContainer = false;
   userLikedArticle = false; // Add this property to track if the user liked the article
   newCommentText: string = ''; // Property to bind to the input field
+  reported: boolean = false;
 
 
   constructor(
@@ -41,6 +42,24 @@ export class ArticleDetailComponent implements OnInit {
         console.error('Article ID is undefined.');
       }
     });
+  }
+  reportArticle(articleId: number): void {
+    const confirmation = window.confirm('Are you sure you want to report this article?');
+    if (confirmation) {
+      this.articleService.reportArticle(articleId).subscribe(
+        () => {
+          console.log('Article reported successfully');
+          this.reported = true; // Set the reported variable to true after successful report
+        },
+        (error) => {
+          console.error('Error reporting article:', error);
+          // Handle error
+        }
+      );
+    } else {
+      console.log('Article reporting cancelled');
+      // Handle cancellation (if needed)
+    }
   }
 
   addComment(): void {

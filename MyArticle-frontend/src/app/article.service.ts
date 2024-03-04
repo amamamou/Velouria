@@ -14,7 +14,11 @@ export class ArticleService {
   private baseUrl = 'http://localhost:3000';
 
   constructor(private http: HttpClient) { }
-  
+
+  reportArticle(articleId: number): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/articles/${articleId}/report`, {});
+  }
+
 
   getAllArticleComments(articleId: number): Observable<Comment[]> {
     return this.http.get<Comment[]>(`${this.apiUrl}/api/articles/${articleId}/comments`);

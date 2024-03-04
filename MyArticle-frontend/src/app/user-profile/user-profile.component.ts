@@ -9,9 +9,13 @@ import { Router } from '@angular/router';
   styleUrls: ['./user-profile.component.css']
 })
 export class UserProfileComponent implements OnInit {
+  notifications: any[] = [];
+
   userProfile: any;
   likedArticles: any[] = [];
   showDropdown: boolean = false; // Variable to toggle dropdown visibility
+  displayNotificationsModal: boolean = false; // Variable to control the display of notifications modal
+
 
   toggleDropdown() {
     this.showDropdown = !this.showDropdown; // Toggle the value
@@ -22,8 +26,47 @@ export class UserProfileComponent implements OnInit {
   ngOnInit(): void {
     this.fetchUserProfile();
     this.fetchLikedArticles();
+    this.getAllNotifications();
 
 
+  }
+  deleteNotification(notificationId: string): void {
+    // Call the admin service method to delete the notification
+    this.userService.deleteNotification(notificationId).subscribe(
+      () => {
+        // Notification deleted successfully, refresh the notifications list
+        this.getAllNotifications();
+      },
+      (error) => {
+        console.error('Error deleting notification:', error);
+        // Handle error
+      }
+    );
+  }
+  closeNotificationsModal(): void {
+    // Close the notifications modal by setting the displayNotificationsModal variable to false
+    this.displayNotificationsModal = false;
+  }
+
+  showNotifications(): void {
+    // Toggle the display of the notifications modal
+    this.displayNotificationsModal = !this.displayNotificationsModal;
+    // Fetch notifications only if the modal is displayed
+    if (this.displayNotificationsModal) {
+      this.getAllNotifications();
+    }
+  }
+
+  getAllNotifications(): void {
+    this.userService.getAllNotifications().subscribe(
+      (response: any[]) => {
+        this.notifications = response; // Assigning response directly as it's an array of notifications
+      },
+      (error) => {
+        console.error('Error fetching notifications:', error);
+        // Handle error
+      }
+    );
   }
 
   fetchUserProfile(): void {

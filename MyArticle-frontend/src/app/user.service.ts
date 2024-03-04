@@ -15,6 +15,26 @@ export class UserService {
 
 
   constructor(private router: Router, private http: HttpClient) {}
+
+
+  getAllNotifications(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/notifications-user`);
+  }
+  deleteNotification(notificationId: string): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/notifications/${notificationId}`, { headers: this.getHeaders() }).pipe(
+      catchError(error => {
+        if (error.status === 401) {
+          console.error('Unauthorized error. Redirecting to login page.');
+          this.router.navigate(['/login']);
+        }
+        console.error('Error deleting the notification:', error);
+        return throwError('Error deleting the notification. Please try again.');
+      })
+    );
+  }
+
+
+
    // Method to fetch liked articles for the authenticated user
    getLikedArticles(): Observable<any> {
     const url = `${this.apiUrl}/liked-articles`;

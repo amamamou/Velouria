@@ -172,3 +172,11 @@
   font-size: 1.8em; /* Adjust size as needed */
   margin-bottom: 10px;
 }
+.ellipsis-icon {
+  cursor: pointer; /* Change cursor to pointer on hover */
+  transition: color 0.3s; /* Smooth transition for color change */
+}
+
+.ellipsis-icon:hover {
+  color: #bd4444; /* Darken the color slightly on hover */
+}

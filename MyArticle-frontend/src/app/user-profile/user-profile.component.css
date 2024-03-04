@@ -234,3 +234,48 @@ width: 100%;
     font-family: 'Roboto Slab', serif; /* Roboto Slab font */
     cursor: pointer;
   }
+
+/* user-profile.component.css */
+.notifications-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
+  z-index: 1000; /* Ensure the container is on top of other elements */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-y: auto; /* Enable vertical scrolling if content overflows */
+}
+
+.notifications-container ul {
+  list-style: none;
+  padding: 0;
+}
+
+.notifications-container ul li {
+  padding: 16px;
+  border-bottom: 1px solid #ddd; /* Separator between notifications */
+}
+
+/* Additional styling for dropdown container and other elements can go here */
+.delete-icon {
+  cursor: pointer;
+  padding: 4px 8px;
+  display: inline-block;
+  font-weight: bold;
+  color: #FF6347; /* Tomato color for the icon, feel free to change */
+  border-radius: 50%; /* Circular background on hover */
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.delete-icon:hover {
+  background-color: #FF6347; /* Tomato background on hover */
+  color: white; /* White X on hover */
+}
+/* user-profile.component.css */
+
+
+

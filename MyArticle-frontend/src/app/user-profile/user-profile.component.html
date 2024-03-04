@@ -16,13 +16,22 @@
     <div class="dropdown-container" *ngIf="showDropdown">
       <!-- Logout button -->
       <button class="logout-button" (click)="logout()">Edit profile</button><br><br>
-      <button class="logout-button" (click)="logout()">Notifications</button><br><br>
+      <button class="logout-button" (click)="showNotifications()">Notifications</button><br><br>
       <button class="logout-button" (click)="logout()">Logout</button>
     </div>
   </div>
 </div>
 
+
+<!-- Notifications container -->
+<div class="notifications-container" *ngIf="displayNotificationsModal">
+  <ul>
+    <li *ngFor="let notification of notifications">{{ notification.message }}       <span class="delete-icon" (click)="deleteNotification(notification.id)">X</span>
+    </li>
+  </ul>
 </div>
+
+
   <hr class="elegant-separator">
 
 

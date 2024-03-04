@@ -64,20 +64,66 @@ app.get('/session-check', isAuthenticated, (req, res) => {
 
 
 // POST /articles - Create a new article
-app.post('/articles', upload.single('image'), (req, res) => {
+app.post('/articles', upload.single('image'), async (req, res) => {
     console.log('Received file:', req.file);
     console.log('Received body:', req.body);
     const { title, content, author, category_id } = req.body; // Added category_id
     const image = req.file ? 'uploads/' + req.file.filename : null;
     const query = 'INSERT INTO articles (title, content, image, author, category_id) VALUES (?, ?, ?, ?, ?)'; // Updated query
-    connection.query(query, [title, content, image, author, category_id], (error, results) => {
+    connection.query(query, [title, content, image, author, category_id], async (error, results) => {
         if (error) {
             console.error('Database error:', error);
             return res.status(500).send(error);
         }
-        res.status(201).json({ id: results.insertId });
+        // Assuming the article was successfully created
+        const notification = {
+            title: 'New Article Added',
+            message: `A new article titled "${title}" has been added.`,
+            type: 'article'
+        };
+
+        try {
+            await createNotificationForUser(notification);
+            res.status(201).json({ id: results.insertId, message: 'Article and notification created successfully' });
+        } catch (notifError) {
+            console.error('Error creating notification:', notifError);
+            // Decide how to handle the situation where the article is created but the notification fails
+            res.status(201).json({ id: results.insertId, message: 'Article created but notification failed' });
+        }
     });
 });
+// POST /articles/:articleId/report - Report an article
+app.post('/articles/:articleId/report', (req, res) => {
+    const articleId = req.params.articleId;
+
+    // Update the 'reported' column for the specified article in the database
+    const query = 'UPDATE articles SET reported = true WHERE id = ?';
+    connection.query(query, [articleId], async (error, results) => {
+        if (error) {
+            console.error('Database error:', error);
+            return res.status(500).send(error);
+        }
+
+        // Create a notification for the admin
+        const notification = {
+            title: 'Article Reported',
+            message: `Article with ID ${articleId} has been reported.`,
+            type: 'report'
+        };
+
+        try {
+            // Call the function to create a notification for the admin
+            await createNotificationForAdmin(notification);
+            // Respond to the request indicating success
+            res.status(200).json({ message: 'Article reported successfully and notification sent to admin' });
+        } catch (error) {
+            // Handle any errors that occur while creating the notification
+            console.error('Error creating notification:', error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
+    });
+});
+
 //lkol
 app.get('/articles', (req, res) => {
   connection.query('SELECT * FROM articles', (error, results) => {
@@ -129,10 +175,16 @@ app.delete('/articles/:id', (req, res) => {
   });
 });
 
+
 // search
 app.get('/articles/search/:term', (req, res) => {
   const searchTerm = '%' + req.params.term + '%'; // Using % for SQL LIKE
-  connection.query('SELECT * FROM articles WHERE title LIKE ?', [searchTerm], (error, results) => {
+  const query = `
+    SELECT * 
+    FROM articles 
+    WHERE title LIKE ? OR author LIKE ?
+  `;
+  connection.query(query, [searchTerm, searchTerm], (error, results) => {
     if (error) {
       console.error("Error fetching articles:", error);
       return res.status(500).send(error);
@@ -140,8 +192,6 @@ app.get('/articles/search/:term', (req, res) => {
     res.json(results);
   });
 });
-
-
 
 
 
@@ -404,6 +454,19 @@ app.get('/notifications', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+app.get('/notifications-user', async (req, res) => {
+  try {
+    // Query to select notifications with recipientType set to 'user'
+    const query = 'SELECT * FROM notifications WHERE recipientType = ? ORDER BY created_at DESC';
+    const notifications = await connection.query(query, ['user']);
+
+    // Send the fetched notifications as a response
+    res.status(200).json(notifications);
+  } catch (error) {
+    console.error('Error fetching notifications:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 
 /*
@@ -615,6 +678,23 @@ async function createNotificationForAdmin(notification) {
     throw error; // You can choose to handle the error differently if needed
   }
 }
+async function createNotificationForUser(notification) {
+  try {
+    // Assuming you have a connection to your database established
+    // Execute the query to insert the notification
+    await connection.query('INSERT INTO notifications (title, message, type, recipientType) VALUES (?, ?, ?, ?)', [
+      notification.title,
+      notification.message,
+      notification.type,
+      'user' // Set the recipientType to 'user'
+    ]);
+    console.log('Notification created successfully.');
+  } catch (error) {
+    console.error('Error creating notification:', error);
+    throw error; // You can choose to handle the error differently if needed
+  }
+}
+
 
 async function checkUserLike(userId, articleId) {
   const result = await connection.query('SELECT * FROM likes WHERE user_id = ? AND article_id = ?', [userId, articleId]);
@@ -686,15 +766,6 @@ app.get('/liked-articles', isAuthenticated, async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-
-
-
-
-
-
-
-
-
 
 //admin
 app.post('/login-admin', async (req, res) => {
