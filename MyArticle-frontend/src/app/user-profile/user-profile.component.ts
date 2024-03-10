@@ -15,6 +15,8 @@ export class UserProfileComponent implements OnInit {
   likedArticles: any[] = [];
   showDropdown: boolean = false; // Variable to toggle dropdown visibility
   displayNotificationsModal: boolean = false; // Variable to control the display of notifications modal
+  showEditProfile: boolean = false; // Flag to show/hide edit profile section
+  updatedUserProfile: any = {}; // Consider defining a more specific type or interface
 
 
   toggleDropdown() {
@@ -30,6 +32,26 @@ export class UserProfileComponent implements OnInit {
 
 
   }
+  submitProfileUpdate(): void {
+    // Example service call, adjust according to your actual userService method
+    this.userService.updateUserProfile(this.updatedUserProfile).subscribe(
+      (response) => {
+        // Handle successful profile update
+        console.log('Profile updated successfully');
+        window.location.reload(); // Reload the window
+      },
+      (error) => {
+        // Handle error
+        console.error('Error updating profile:', error);
+      }
+    );
+  }
+
+  toggleEditProfile(): void {
+    this.showEditProfile = !this.showEditProfile;
+  }
+
+
   deleteNotification(notificationId: string): void {
     // Call the admin service method to delete the notification
     this.userService.deleteNotification(notificationId).subscribe(

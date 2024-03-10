@@ -33,7 +33,19 @@ export class UserService {
     );
   }
 
-
+// Method to update user profile
+updateUserProfile(profileData: any): Observable<any> {
+  return this.http.put<any>(`${this.apiUrl}/profile`, profileData, { headers: this.getHeaders() }).pipe(
+    catchError(error => {
+      if (error.status === 401) {
+        console.error('Unauthorized error. Redirecting to login page.');
+        this.router.navigate(['/login']);
+      }
+      console.error('Error updating user profile:', error);
+      return throwError('Error updating user profile. Please try again.');
+    })
+  );
+}
 
    // Method to fetch liked articles for the authenticated user
    getLikedArticles(): Observable<any> {

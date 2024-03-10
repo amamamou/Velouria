@@ -64,13 +64,14 @@ app.get('/session-check', isAuthenticated, (req, res) => {
 
 
 // POST /articles - Create a new article
+// POST /articles - Create a new article
 app.post('/articles', upload.single('image'), async (req, res) => {
     console.log('Received file:', req.file);
     console.log('Received body:', req.body);
-    const { title, content, author, category_id } = req.body; // Added category_id
+    const { title, content, author, category_id, time } = req.body; // Added time
     const image = req.file ? 'uploads/' + req.file.filename : null;
-    const query = 'INSERT INTO articles (title, content, image, author, category_id) VALUES (?, ?, ?, ?, ?)'; // Updated query
-    connection.query(query, [title, content, image, author, category_id], async (error, results) => {
+    const query = 'INSERT INTO articles (title, content, image, author, category_id, time) VALUES (?, ?, ?, ?, ?, ?)'; // Updated query
+    connection.query(query, [title, content, image, author, category_id, time], async (error, results) => {
         if (error) {
             console.error('Database error:', error);
             return res.status(500).send(error);
@@ -92,6 +93,7 @@ app.post('/articles', upload.single('image'), async (req, res) => {
         }
     });
 });
+
 // POST /articles/:articleId/report - Report an article
 app.post('/articles/:articleId/report', (req, res) => {
     const articleId = req.params.articleId;
@@ -747,6 +749,53 @@ async function getUserInfo(userId) {
     throw error;
   }
 }
+// Endpoint to update user profile
+// PUT /profile - Update user profile
+app.put('/profile', isAuthenticated, (req, res) => {
+    const { first_name, last_name, email, password } = req.body; // Assuming these are the fields to update
+    const userId = req.user.userId; // Get the authenticated user's ID from the decoded token
+
+    // Construct the query based on the fields provided in the request body
+    let query = 'UPDATE users SET';
+    let values = [];
+
+    // Construct SET clause based on provided fields
+    if (first_name) {
+        query += ' first_name = ?,';
+        values.push(first_name);
+    }
+    if (last_name) {
+        query += ' last_name = ?,';
+        values.push(last_name);
+    }
+    if (email) {
+        query += ' email = ?,';
+        values.push(email);
+    }
+    if (password) {
+        query += ' password = ?,';
+        values.push(password);
+    }
+
+    // Remove trailing comma
+    query = query.slice(0, -1);
+
+    // Add WHERE clause
+    query += ' WHERE user_id = ?';
+    values.push(userId);
+
+    console.log('Executing query:', query);
+    console.log('With values:', values);
+
+    connection.query(query, values, error => {
+        if (error) {
+            console.error('Database error:', error);
+            return res.status(500).send(error);
+        }
+        res.json({ message: 'Profile updated successfully' });
+    });
+});
+
 // Endpoint to fetch articles liked by the authenticated user
 app.get('/liked-articles', isAuthenticated, async (req, res) => {
   try {

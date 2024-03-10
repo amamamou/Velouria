@@ -5,7 +5,23 @@
   </div>
   <div class="username">@{{ userProfile.username }}</div>
   <div class="name">{{ userProfile?.first_name }} {{ userProfile?.last_name }}
+<!-- Edit Profile Section -->
+ <!-- Edit Profile Section -->
+ <div class="overlay" *ngIf="showEditProfile">
+  <div class="edit-profile-container">
+  <label>First Name:</label>
+  <input type="text" [(ngModel)]="updatedUserProfile.first_name">
+  <label>Last Name:</label>
+  <input type="text" [(ngModel)]="updatedUserProfile.last_name">
+  <label>Email:</label>
+  <input type="email" [(ngModel)]="updatedUserProfile.email">
+  <!-- Add more input fields as needed -->
+  <button class="explore-button9" (click)="submitProfileUpdate()">Update</button> &nbsp;
+  <button class="explore-button7" (click)="toggleEditProfile()">Cancel</button>
 
+</div>
+</div>
+</div>
 
   <!-- Container to position dropdown correctly -->
   <div style="position: relative;">
@@ -15,7 +31,7 @@
     <!-- Dropdown container -->
     <div class="dropdown-container" *ngIf="showDropdown">
       <!-- Logout button -->
-      <button class="logout-button" (click)="logout()">Edit profile</button><br><br>
+      <button class="logout-button" (click)="toggleEditProfile()">Edit Profile</button><br><br>
       <button class="logout-button" (click)="showNotifications()">Notifications</button><br><br>
       <button class="logout-button" (click)="logout()">Logout</button>
     </div>
